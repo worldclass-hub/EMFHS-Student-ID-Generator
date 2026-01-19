@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMFHS Student ID Generator - Ultimate Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- ==================== ANTI-BORDER-EXCEED POWER ==================== -->
+    <style>
+        /* CRITICAL FIX: Prevent overscroll bounce effect */
+        html {
+            overflow-x: hidden;
+            max-width: 100%;
+            position: relative;
+            overscroll-behavior: none;
+            height: 100%;
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            max-width: 100%;
+            width: 100%;
+            overscroll-behavior-y: none;
+        }
+        
+        /* Main container - Proper scroll containment */
+        .page-container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Content wrapper - Proper scroll management */
+        .content-wrapper {
+            flex: 1 0 auto;
+            width: 100%;
+            max-width: 100%;
+            position: relative;
+        }
+        
+        /* Footer - Stays at bottom */
+        .page-footer {
+            flex-shrink: 0;
+            width: 100%;
+            position: relative;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        
+        /* Scroll boundary indicator */
+        .scroll-boundary {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #1e40af, #3b82f6);
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .scroll-boundary.visible {
+            opacity: 1;
+        }
+        
+        /* Prevent pull-to-refresh on mobile */
+        @media (max-width: 768px) {
+            body {
+                overscroll-behavior-y: contain;
+            }
+        }
+        
+        /* Ensure no content overflow */
+        main {
+            overflow-x: hidden;
+            width: 100%;
+        }
+        
+        /* Smooth scrolling boundaries */
+        .scroll-container {
+            position: relative;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Footer stays at bottom */
+        .footer-wrapper {
+            margin-top: auto;
+        }
+        /* ==================== END ANTI-BORDER-EXCEED POWER ==================== */
+    </style>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                        secondary: '#1e3a8a',
+                        accent: '#3b82f6',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
+                        dark: '#1f2937',
+                        light: '#f8fafc',
+                        premium: '#8b5cf6'
+                    },
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        'hover': '0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.06)',
+                        'float': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                        'glow': '0 0 30px rgba(59, 130, 246, 0.5)'
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+                        'bounce-slow': 'bounce 3s infinite'
+                    },
+                    keyframes: {
+                        'float': {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { 
+                                boxShadow: '0 0 20px rgba(139, 92, 246, 0.5)',
+                                transform: 'scale(1)'
+                            },
+                            '50%': { 
+                                boxShadow: '0 0 40px rgba(139, 92, 246, 0.8)',
+                                transform: 'scale(1.05)'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Original styles from Code B */
+        .gradient-bg {
+            background: linear-gradient(90deg, #1e40af 0%, #3b82f6 100%);
+        }
+        
+        .premium-gradient {
+            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 50%, #10b981 100%);
+        }
+        
+        .id-card {
+            background: linear-gradient(145deg, #ffffff, #f0f4f8);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .id-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .id-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #1e40af 0%, #3b82f6 100%);
+        }
+        
+        .pattern-bg {
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 25%),
+                radial-gradient(circle at 90% 80%, rgba(30, 64, 175, 0.08) 0%, transparent 25%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .floating-download-btn {
+            animation: float 6s ease-in-out infinite, pulse-glow 2s ease-in-out infinite;
+            z-index: 1000;
+        }
+        
+        .download-modal {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: linear-gradient(to bottom, #f1f5f9, #e2e8f0);
+            border-radius: 10px;
+        }
+        
+        ::webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #3b82f6, #1e40af);
+            border-radius: 10px;
+            border: 3px solid #f1f5f9;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #2563eb, #1e3a8a);
+        }
+        
+        /* Selection color */
+        ::selection {
+            background-color: rgba(59, 130, 246, 0.3);
+            color: #1e3a8a;
+        }
+        
+        /* Loading animation */
+        .loading-wave {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .loading-wave div {
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(to top, #3b82f6, #8b5cf6);
+            animation: wave 1.2s ease-in-out infinite;
+            border-radius: 10px;
+        }
+        
+        .loading-wave div:nth-child(2) { animation-delay: 0.1s; }
+        .loading-wave div:nth-child(3) { animation-delay: 0.2s; }
+        .loading-wave div:nth-child(4) { animation-delay: 0.3s; }
+        
+        @keyframes wave {
+            0%, 100% { transform: scaleY(0.5); }
+            50% { transform: scaleY(1.5); }
+        }
+    </style>
+</head>
+<body class="pattern-bg">
+    <!-- Scroll Boundary Indicator -->
+    <div id="scrollBoundary" class="scroll-boundary"></div>
+    
+    <!-- Floating Download Button -->
+    <div id="floatingDownloadBtn" class="floating-download-btn fixed bottom-8 right-8 w-16 h-16 rounded-full premium-gradient flex items-center justify-center shadow-float cursor-pointer z-50 hover:shadow-glow transition-all duration-300">
+        <i class="fas fa-file-export text-white text-2xl"></i>
+        <div class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold animate-pulse">
+            <span id="downloadCount">0</span>
+        </div>
+    </div>
+    
+    <!-- Download Modal -->
+    <div id="downloadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-float max-w-md w-full download-modal">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-dark">
+                        <i class="fas fa-download text-accent mr-2"></i>
+                        Export Student Data
+                    </h3>
+                    <button id="closeModal" class="text-gray-400 hover:text-gray-600 text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <p class="text-gray-600 mb-6">
+                    Export all generated student IDs in your preferred format. 
+                    <span class="font-semibold text-primary" id="exportCount">0 records</span> will be exported.
+                </p>
+                
+                <div class="space-y-4">
+                    <button id="exportWordBtn" class="w-full bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 text-blue-800 p-4 rounded-xl flex items-center justify-between transition-all duration-300 group hover:scale-[1.02]">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mr-4 group-hover:bg-blue-200">
+                                <i class="fab fa-microsoft text-blue-600 text-2xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <h4 class="font-bold text-lg">Microsoft Word</h4>
+                                <p class="text-sm text-blue-600">Professional table format</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-blue-400 group-hover:text-blue-600"></i>
+                    </button>
+                    
+                    <button id="exportPDFBtn" class="w-full bg-red-50 hover:bg-red-100 border-2 border-red-200 text-red-800 p-4 rounded-xl flex items-center justify-between transition-all duration-300 group hover:scale-[1.02]">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center mr-4 group-hover:bg-red-200">
+                                <i class="fas fa-file-pdf text-red-600 text-2xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <h4 class="font-bold text-lg">PDF Document</h4>
+                                <p class="text-sm text-red-600">Print-ready format</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-red-400 group-hover:text-red-600"></i>
+                    </button>
+                    
+                    <button id="exportCSVBtn" class="w-full bg-green-50 hover:bg-green-100 border-2 border-green-200 text-green-800 p-4 rounded-xl flex items-center justify-between transition-all duration-300 group hover:scale-[1.02]">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center mr-4 group-hover:bg-green-200">
+                                <i class="fas fa-file-csv text-green-600 text-2xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <h4 class="font-bold text-lg">CSV Spreadsheet</h4>
+                                <p class="text-sm text-green-600">Excel/Google Sheets compatible</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-green-400 group-hover:text-green-600"></i>
+                    </button>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="includeTimestamp" class="w-4 h-4 text-accent rounded focus:ring-accent" checked>
+                        <span class="ml-2 text-gray-700">Include generation timestamp</span>
+                    </label>
+                    <label class="flex items-center mt-3">
+                        <input type="checkbox" id="includeChecksum" class="w-4 h-4 text-accent rounded focus:ring-accent" checked>
+                        <span class="ml-2 text-gray-700">Include checksum verification</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 shadow-float text-center">
+            <div class="loading-wave mb-4">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <p class="text-dark font-medium" id="loadingText">Preparing your document...</p>
+        </div>
+    </div>
+    
+    <!-- ==================== MAIN CONTAINER WITH ANTI-BORDER POWER ==================== -->
+    <div class="page-container" id="pageContainer">
+        <div class="content-wrapper max-w-7xl mx-auto p-4 md:p-6">
+            <!-- Header -->
+            <header class="mb-8 md:mb-12 text-center">
+                <div class="flex flex-col md:flex-row items-center justify-between mb-6">
+                    <div class="flex items-center mb-4 md:mb-0">
+                        <div class="w-16 h-16 rounded-full premium-gradient flex items-center justify-center mr-4 shadow-float animate-bounce-slow">
+                            <i class="fas fa-id-card-alt text-white text-2xl"></i>
+                        </div>
+                        <div class="text-left">
+                            <h1 class="text-2xl md:text-4xl font-bold text-dark bg-gradient-to-r from-primary to-premium bg-clip-text text-transparent">
+                                EMFHS Student ID Generator
+                            </h1>
+                            <p class="text-gray-600">Ultimate Enterprise Edition • Official ID System</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col items-end">
+                        <div class="flex items-center glass-effect rounded-full px-4 py-2 shadow-card mb-2">
+                            <i class="fas fa-graduation-cap text-accent mr-2"></i>
+                            <span class="font-medium">Format: <code class="bg-gray-100 px-2 py-1 rounded font-mono">EMFHS-YYYY-NNN-XX</code></span>
+                        </div>
+                        <div id="storageIndicator" class="text-sm text-gray-600">
+                            <i class="fas fa-database mr-1"></i>
+                            Storage: <span id="storageUsed">0</span> / 5MB
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Storage Warning -->
+                <div id="storageWarning" class="hidden bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl p-4 mb-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle text-yellow-600 text-xl mr-3"></i>
+                        <div>
+                            <h3 class="font-bold text-yellow-800">Storage Optimization Recommended</h3>
+                            <p class="text-yellow-700">You're approaching storage limit. Use the export feature to backup your data.</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Left Column: Input Form & Stats -->
+                <div class="space-y-8">
+                    <!-- Input Form Section -->
+                    <div class="bg-white rounded-2xl shadow-card p-6 md:p-8 id-card">
+                        <h2 class="text-2xl font-bold text-dark mb-6 flex items-center">
+                            <i class="fas fa-user-plus text-accent mr-3"></i>
+                            Student Information
+                        </h2>
+                        
+                        <form id="studentForm" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="fullName" class="block text-gray-700 font-medium mb-2">
+                                        <i class="fas fa-user text-gray-500 mr-2"></i>Full Name
+                                    </label>
+                                    <input type="text" id="fullName" 
+                                           class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300"
+                                           placeholder="Enter student's full name" required>
+                                </div>
+                                
+                                <div>
+                                    <label for="enrollmentYear" class="block text-gray-700 font-medium mb-2">
+                                        <i class="fas fa-calendar-alt text-gray-500 mr-2"></i>Enrollment Year
+                                    </label>
+                                    <select id="enrollmentYear" 
+                                            class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300">
+                                        <!-- Years will be dynamically populated from 2020 to 3000 -->
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label for="studentClass" class="block text-gray-700 font-medium mb-2">
+                                        <i class="fas fa-school text-gray-500 mr-2"></i>Class
+                                    </label>
+                                    <select id="studentClass" 
+                                            class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300">
+                                        <option value="JSS 1">JSS 1</option>
+                                        <option value="JSS 2">JSS 2</option>
+                                        <option value="JSS 3">JSS 3</option>
+                                        <option value="SSS 1" selected>SSS 1</option>
+                                        <option value="SSS 2">SSS 2</option>
+                                        <option value="SSS 3">SSS 3</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label for="admissionDate" class="block text-gray-700 font-medium mb-2">
+                                        <i class="fas fa-calendar-day text-gray-500 mr-2"></i>Admission Date
+                                    </label>
+                                    <input type="date" id="admissionDate" 
+                                           class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300"
+                                           required>
+                                </div>
+                            </div>
+                            
+                            <div class="pt-4">
+                                <button type="submit" 
+                                        class="w-full premium-gradient text-white font-bold py-4 rounded-xl hover:opacity-90 transition duration-300 flex items-center justify-center shadow-card hover:shadow-hover transform hover:-translate-y-1">
+                                    <i class="fas fa-id-card mr-3"></i>
+                                    Generate Student ID
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <!-- Data Management Tools -->
+                        <div class="mt-8 pt-6 border-t border-gray-200">
+                            <h3 class="text-lg font-bold text-dark mb-4">Data Management</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <button id="exportJsonBtn" class="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-3 rounded-xl font-medium transition flex items-center justify-center transform hover:-translate-y-1">
+                                    <i class="fas fa-file-code mr-2"></i> Export JSON
+                                </button>
+                                <button id="importBtn" class="bg-purple-100 hover:bg-purple-200 text-purple-800 px-4 py-3 rounded-xl font-medium transition flex items-center justify-center transform hover:-translate-y-1">
+                                    <i class="fas fa-file-import mr-2"></i> Import
+                                </button>
+                                <button id="clearAllBtn" class="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-3 rounded-xl font-medium transition flex items-center justify-center transform hover:-translate-y-1">
+                                    <i class="fas fa-trash mr-2"></i> Clear All
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Stats Section -->
+                        <div class="mt-8 pt-6 border-t border-gray-200">
+                            <h3 class="text-lg font-bold text-dark mb-4">System Statistics</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center transform hover:scale-105 transition">
+                                    <div class="text-2xl font-bold text-primary" id="totalIds">0</div>
+                                    <div class="text-gray-600 text-sm">Total Students</div>
+                                </div>
+                                <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center transform hover:scale-105 transition">
+                                    <div class="text-2xl font-bold text-success" id="currentYearCount">0</div>
+                                    <div class="text-gray-600 text-sm" id="currentYearLabel">2025 Enrollees</div>
+                                </div>
+                                <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 text-center transform hover:scale-105 transition">
+                                    <div class="text-2xl font-bold text-premium" id="todayIds">0</div>
+                                    <div class="text-gray-600 text-sm">Today's Adds</div>
+                                </div>
+                                <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 text-center transform hover:scale-105 transition">
+                                    <div class="text-2xl font-bold text-warning" id="storagePercent">0%</div>
+                                    <div class="text-gray-600 text-sm">Storage Used</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bulk Operations -->
+                    <div class="bg-white rounded-2xl shadow-card p-6 id-card">
+                        <h3 class="text-xl font-bold text-dark mb-4 flex items-center">
+                            <i class="fas fa-bolt text-accent mr-3"></i>
+                            Bulk Operations
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">
+                                    <i class="fas fa-users text-gray-500 mr-2"></i>Generate Multiple IDs
+                                </label>
+                                <textarea id="bulkNames" 
+                                          class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300 h-32 resize-none"
+                                          placeholder="Enter student names (one per line)&#10;Example:&#10;Adekunle Joy&#10;Bello Samuel&#10;Chukwu Emeka"></textarea>
+                                <div class="text-sm text-gray-500 mt-1">Names will be assigned to the selected class and year</div>
+                            </div>
+                            <button id="bulkGenerateBtn" 
+                                    class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 rounded-xl hover:opacity-90 transition flex items-center justify-center shadow-card transform hover:-translate-y-1">
+                                <i class="fas fa-magic mr-2"></i>
+                                Generate Bulk IDs
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column: Preview & List -->
+                <div class="space-y-8">
+                    <!-- ID Card Preview -->
+                    <div class="id-card shadow-card p-8 relative overflow-hidden">
+                        <!-- Decorative elements -->
+                        <div class="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-blue-100 to-transparent rounded-full opacity-50"></div>
+                        <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-tr from-purple-100 to-transparent rounded-full opacity-50"></div>
+                        
+                        <div class="flex justify-between items-start mb-6 relative">
+                            <div>
+                                <h2 class="text-xl font-bold text-dark">EMILIA FOREMOST HIGH SCHOOL</h2>
+                                <p class="text-gray-600">Official Student Identification Card</p>
+                            </div>
+                            <div class="w-16 h-16 rounded-full premium-gradient flex items-center justify-center shadow-lg">
+                                <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col md:flex-row items-center md:items-start mb-8 relative">
+                            <div class="w-32 h-32 rounded-xl bg-gradient-to-br from-blue-100 to-gray-200 flex items-center justify-center mb-4 md:mb-0 md:mr-8 shadow-inner border-4 border-white">
+                                <i class="fas fa-user text-gray-400 text-6xl"></i>
+                            </div>
+                            
+                            <div class="flex-1">
+                                <div class="mb-4">
+                                    <div class="text-gray-500 text-sm">STUDENT NAME</div>
+                                    <div class="text-xl font-bold text-dark" id="previewName">[Student Name]</div>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-4 mb-6">
+                                    <div>
+                                        <div class="text-gray-500 text-sm">STUDENT ID</div>
+                                        <div class="text-lg font-mono font-bold text-primary" id="previewId">EMFHS-2025-001-A4</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-gray-500 text-sm">CLASS</div>
+                                        <div class="text-lg font-bold text-dark" id="previewClass">SSS 1</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-gray-500 text-sm">ENROLLMENT YEAR</div>
+                                        <div class="text-lg font-bold text-dark" id="previewYear">2025</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-gray-500 text-sm">ADMISSION DATE</div>
+                                        <div class="text-lg font-bold text-dark" id="previewDate">Jan 10, 2025</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex space-x-3">
+                                    <button onclick="copyCurrentId()" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg font-medium transition flex items-center justify-center transform hover:-translate-y-1">
+                                        <i class="fas fa-copy mr-2"></i> Copy ID
+                                    </button>
+                                    <button onclick="downloadSingleIdCard()" class="flex-1 bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium transition flex items-center justify-center transform hover:-translate-y-1">
+                                        <i class="fas fa-id-card mr-2"></i> Save Card
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-xs text-gray-400 text-center pt-4 border-t border-gray-100">
+                            <i class="fas fa-shield-alt mr-1"></i> Secure ID with verification checksum
+                        </div>
+                    </div>
+                    
+                    <!-- Search & Generated IDs -->
+                    <div class="bg-white rounded-2xl shadow-card p-6 id-card scroll-container">
+                        <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-dark flex items-center mb-4 md:mb-0">
+                                <i class="fas fa-list text-accent mr-3"></i>
+                                Generated IDs
+                            </h2>
+                            
+                            <div class="relative w-full md:w-64">
+                                <input type="text" id="searchInput" 
+                                       class="w-full p-3 pl-10 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300"
+                                       placeholder="Search students...">
+                                <i class="fas fa-search text-gray-400 absolute left-3 top-3.5"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Pagination Controls -->
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="text-gray-600">
+                                Showing <span id="pageStart">1</span>-<span id="pageEnd">10</span> of <span id="totalStudents">0</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button id="prevPage" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl disabled:opacity-50 transition transform hover:-translate-y-0.5">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <span id="currentPage" class="px-3 py-1 font-medium">1</span>
+                                <button id="nextPage" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl disabled:opacity-50 transition transform hover:-translate-y-0.5">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto rounded-xl border-2 border-gray-200 max-h-96 overflow-y-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50 sticky top-0">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">No.</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Student ID</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Name</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Class</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="idList" class="bg-white divide-y divide-gray-200">
+                                    <!-- IDs will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-4 text-center text-gray-500" id="emptyMessage">
+                            <i class="fas fa-user-graduate text-3xl mb-2 text-gray-300"></i>
+                            <p class="font-medium">No student IDs generated yet.</p>
+                            <p class="text-sm">Fill the form to create your first ID.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="page-footer bg-gray-900 text-white footer-wrapper">
+            <div class="max-w-7xl mx-auto px-4 py-6 sm:py-8">
+                <div class="text-center">
+                    <p class="mb-2"><strong>EMFHS Student ID Generator System • Ultimate Edition • AI-Powered</strong></p>
+                    <p class="text-sm text-gray-400">Storage Capacity: 5MB • Supports 10,000+ Records • JSS/SSS Class System</p>
+                </div>
+                
+                <div class="border-t border-gray-800 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center">
+                    <p class="text-gray-500 text-xs sm:text-sm">
+                        &copy; 2024 EMILIA FOREMOST HIGH SCHOOL. All Rights Reserved. • Secure Student ID Generator v3.0
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Hidden file input for import -->
+    <input type="file" id="fileInput" accept=".json" style="display: none;">
+    
+    <script>
+        // ====================
+        // ULTIMATE SYSTEM
+        // ====================
+        
+        // Configuration
+        const ITEMS_PER_PAGE = 20;
+        const STORAGE_LIMIT = 5 * 1024 * 1024; // 5MB
+        const START_YEAR = 2020;
+        const END_YEAR = 3000;
+        
+        // State management
+        let students = [];
+        let sequenceCounters = {};
+        let currentPage = 1;
+        let currentSearch = '';
+        
+        // ==================== SCROLL MANAGEMENT POWER ====================
+        function setupScrollManagement() {
+            let lastScrollTop = 0;
+            let scrollTimeout;
+            
+            function checkScrollPosition() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollHeight = document.documentElement.scrollHeight;
+                const clientHeight = document.documentElement.clientHeight;
+                
+                // Check if we're at the bottom
+                const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
+                
+                // Show boundary indicator when near bottom
+                if (distanceFromBottom <= 50 && distanceFromBottom > 0) {
+                    document.getElementById('scrollBoundary').classList.add('visible');
+                } else {
+                    document.getElementById('scrollBoundary').classList.remove('visible');
+                }
+                
+                // Prevent overscroll beyond footer
+                if (distanceFromBottom < 0) {
+                    // We've scrolled past the bottom, bounce back
+                    window.scrollTo({
+                        top: scrollHeight - clientHeight,
+                        behavior: 'smooth'
+                    });
+                }
+                
+                lastScrollTop = scrollTop;
+            }
+            
+            function handleScroll() {
+                if (scrollTimeout) {
+                    window.cancelAnimationFrame(scrollTimeout);
+                }
+                
+                scrollTimeout = window.requestAnimationFrame(checkScrollPosition);
+            }
+            
+            window.addEventListener('scroll', handleScroll, { passive: true });
+            checkScrollPosition();
+        }
+        // ==================== END SCROLL MANAGEMENT POWER ====================
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup scroll management FIRST
+            setupScrollManagement();
+            
+            // Populate years from 2020 to 3000
+            populateYearOptions();
+            
+            // Set default admission date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('admissionDate').value = today;
+            
+            // Load data
+            loadStudents();
+            updateStats();
+            updateStorageIndicator();
+            updateDownloadCount();
+            renderStudentList();
+            
+            // Event listeners
+            document.getElementById('studentForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                generateStudentID();
+            });
+            
+            document.getElementById('clearAllBtn').addEventListener('click', confirmClearAll);
+            document.getElementById('exportJsonBtn').addEventListener('click', exportJsonData);
+            document.getElementById('importBtn').addEventListener('click', () => document.getElementById('fileInput').click());
+            document.getElementById('bulkGenerateBtn').addEventListener('click', bulkGenerate);
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                currentSearch = e.target.value;
+                currentPage = 1;
+                renderStudentList();
+            });
+            
+            document.getElementById('prevPage').addEventListener('click', () => changePage(-1));
+            document.getElementById('nextPage').addEventListener('click', () => changePage(1));
+            
+            document.getElementById('fileInput').addEventListener('change', importData);
+            
+            // Floating download button events
+            document.getElementById('floatingDownloadBtn').addEventListener('click', showDownloadModal);
+            document.getElementById('closeModal').addEventListener('click', hideDownloadModal);
+            document.getElementById('exportWordBtn').addEventListener('click', exportToWord);
+            document.getElementById('exportPDFBtn').addEventListener('click', exportToPDF);
+            document.getElementById('exportCSVBtn').addEventListener('click', exportToCSV);
+            
+            // Close modal when clicking outside
+            document.getElementById('downloadModal').addEventListener('click', function(e) {
+                if (e.target.id === 'downloadModal') {
+                    hideDownloadModal();
+                }
+            });
+            
+            // Auto-save backup every 10 minutes
+            setInterval(() => {
+                if (students.length > 0) {
+                    localStorage.setItem('emfhs_backup_' + Date.now(), JSON.stringify(students));
+                    console.log('Auto-backup created');
+                }
+            }, 10 * 60 * 1000);
+            
+            // Prevent right-click drag on body
+            document.addEventListener('dragstart', function(e) {
+                if (e.target.tagName === 'BODY' || e.target.tagName === 'HTML') {
+                    e.preventDefault();
+                }
+            });
+            
+            // Prevent text selection on body drag
+            document.addEventListener('selectstart', function(e) {
+                if (e.target.tagName === 'BODY' || e.target.tagName === 'HTML') {
+                    e.preventDefault();
+                }
+            });
+        });
+        
+        // Populate year options from 2020 to 3000
+        function populateYearOptions() {
+            const yearSelect = document.getElementById('enrollmentYear');
+            yearSelect.innerHTML = '';
+            
+            const currentYear = new Date().getFullYear();
+            let selectedSet = false;
+            
+            for (let year = START_YEAR; year <= END_YEAR; year++) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                
+                if (year === currentYear && !selectedSet) {
+                    option.selected = true;
+                    selectedSet = true;
+                }
+                
+                yearSelect.appendChild(option);
+            }
+        }
+        
+        // Load students
+        function loadStudents() {
+            const saved = localStorage.getItem('emfhs_students');
+            if (saved) {
+                try {
+                    students = JSON.parse(saved);
+                    
+                    // Initialize sequence counters
+                    students.forEach(student => {
+                        const year = student.year;
+                        const seq = parseInt(student.id.split('-')[2]);
+                        
+                        if (!sequenceCounters[year]) {
+                            sequenceCounters[year] = 0;
+                        }
+                        
+                        if (sequenceCounters[year] < seq) {
+                            sequenceCounters[year] = seq;
+                        }
+                    });
+                    
+                    console.log(`Loaded ${students.length} students from storage`);
+                } catch (e) {
+                    console.error('Error loading students:', e);
+                    students = [];
+                }
+            }
+        }
+        
+        // Save with storage check
+        function saveStudents() {
+            try {
+                const dataStr = JSON.stringify(students);
+                const dataSize = new Blob([dataStr]).size;
+                
+                // Check storage limit
+                if (dataSize > STORAGE_LIMIT) {
+                    showNotification('Storage limit reached! Cannot save more data.', 'error');
+                    return false;
+                }
+                
+                localStorage.setItem('emfhs_students', dataStr);
+                updateStats();
+                updateStorageIndicator();
+                updateDownloadCount();
+                return true;
+            } catch (e) {
+                console.error('Error saving students:', e);
+                showNotification('Error saving data!', 'error');
+                return false;
+            }
+        }
+        
+        // Generate unique student ID
+        function generateStudentID() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const year = document.getElementById('enrollmentYear').value;
+            const studentClass = document.getElementById('studentClass').value;
+            const admissionDate = new Date(document.getElementById('admissionDate').value);
+            
+            if (!fullName) {
+                showNotification('Please enter a student name', 'warning');
+                return;
+            }
+            
+            // Check for duplicates
+            const duplicate = students.find(student => 
+                student.name.toLowerCase() === fullName.toLowerCase() && 
+                student.class === studentClass && 
+                student.year === year
+            );
+            
+            if (duplicate) {
+                showNotification(`Student "${fullName}" already exists in class ${studentClass} (${year})`, 'warning');
+                updatePreview(duplicate);
+                return;
+            }
+            
+            // Generate ID
+            if (!sequenceCounters[year]) {
+                sequenceCounters[year] = 0;
+            }
+            sequenceCounters[year]++;
+            const sequence = sequenceCounters[year].toString().padStart(3, '0');
+            const checksum = generateChecksum();
+            const studentId = `EMFHS-${year}-${sequence}-${checksum}`;
+            
+            // Create student object
+            const student = {
+                id: studentId,
+                name: fullName,
+                class: studentClass,
+                year: year,
+                admissionDate: admissionDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                }),
+                timestamp: new Date().toISOString(),
+                dateObj: admissionDate.toISOString().split('T')[0]
+            };
+            
+            students.unshift(student);
+            
+            if (saveStudents()) {
+                renderStudentList();
+                updatePreview(student);
+                document.getElementById('fullName').value = '';
+                document.getElementById('admissionDate').value = new Date().toISOString().split('T')[0];
+                showNotification(`ID ${studentId} generated for ${fullName}!`, 'success');
+            }
+        }
+        
+        // Bulk generate IDs
+        function bulkGenerate() {
+            const namesText = document.getElementById('bulkNames').value.trim();
+            if (!namesText) {
+                showNotification('Please enter student names', 'warning');
+                return;
+            }
+            
+            const names = namesText.split('\n').filter(name => name.trim());
+            const year = document.getElementById('enrollmentYear').value;
+            const studentClass = document.getElementById('studentClass').value;
+            
+            if (names.length > 100) {
+                if (!confirm(`You're about to generate ${names.length} IDs. Continue?`)) return;
+            }
+            
+            let generated = 0;
+            let skipped = 0;
+            
+            names.forEach(fullName => {
+                fullName = fullName.trim();
+                if (!fullName) return;
+                
+                // Check duplicate
+                const duplicate = students.find(student => 
+                    student.name.toLowerCase() === fullName.toLowerCase() && 
+                    student.class === studentClass && 
+                    student.year === year
+                );
+                
+                if (duplicate) {
+                    skipped++;
+                    return;
+                }
+                
+                // Generate ID
+                if (!sequenceCounters[year]) {
+                    sequenceCounters[year] = 0;
+                }
+                sequenceCounters[year]++;
+                const sequence = sequenceCounters[year].toString().padStart(3, '0');
+                const checksum = generateChecksum();
+                const studentId = `EMFHS-${year}-${sequence}-${checksum}`;
+                
+                const student = {
+                    id: studentId,
+                    name: fullName,
+                    class: studentClass,
+                    year: year,
+                    admissionDate: new Date().toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    }),
+                    timestamp: new Date().toISOString(),
+                    dateObj: new Date().toISOString().split('T')[0]
+                };
+                
+                students.unshift(student);
+                generated++;
+            });
+            
+            if (saveStudents()) {
+                renderStudentList();
+                document.getElementById('bulkNames').value = '';
+                showNotification(`Generated ${generated} IDs, skipped ${skipped} duplicates`, 'success');
+            }
+        }
+        
+        // Generate checksum
+        function generateChecksum() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let checksum = '';
+            for (let i = 0; i < 2; i++) {
+                checksum += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return checksum;
+        }
+        
+        // ====================
+        // DOWNLOAD/EXPORT FUNCTIONS
+        // ====================
+        
+        function showDownloadModal() {
+            if (students.length === 0) {
+                showNotification('No data to export', 'warning');
+                return;
+            }
+            
+            document.getElementById('exportCount').textContent = `${students.length} records`;
+            document.getElementById('downloadModal').classList.remove('hidden');
+            document.getElementById('downloadModal').classList.add('flex');
+        }
+        
+        function hideDownloadModal() {
+            document.getElementById('downloadModal').classList.add('hidden');
+            document.getElementById('downloadModal').classList.remove('flex');
+        }
+        
+        function showLoading(message = 'Preparing your document...') {
+            document.getElementById('loadingText').textContent = message;
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+            document.getElementById('loadingOverlay').classList.add('flex');
+        }
+        
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+            document.getElementById('loadingOverlay').classList.remove('flex');
+        }
+        
+        // Export to Word
+        function exportToWord() {
+            showLoading('Generating Word document...');
+            
+            setTimeout(() => {
+                const includeTimestamp = document.getElementById('includeTimestamp').checked;
+                const includeChecksum = document.getElementById('includeChecksum').checked;
+                
+                let content = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>EMFHS Student IDs - ${new Date().toLocaleDateString()}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 40px; }
+                        h1 { color: #1e40af; border-bottom: 3px solid #3b82f6; padding-bottom: 10px; }
+                        h2 { color: #374151; margin-top: 30px; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th { background-color: #1e40af; color: white; padding: 12px; text-align: left; }
+                        td { padding: 10px; border-bottom: 1px solid #e5e7eb; }
+                        tr:nth-child(even) { background-color: #f8fafc; }
+                        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+                        .logo { font-size: 24px; font-weight: bold; color: #1e40af; }
+                        .footer { margin-top: 40px; color: #6b7280; font-size: 12px; text-align: center; }
+                        .checksum { font-family: monospace; color: #059669; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div>
+                            <h1>EMILIA FOREMOST HIGH SCHOOL</h1>
+                            <h2>Student ID Registry</h2>
+                        </div>
+                        <div class="logo">EMFHS ID System</div>
+                    </div>
+                    
+                    <p><strong>Report Date:</strong> ${new Date().toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric',
+                        weekday: 'long' 
+                    })}</p>
+                    <p><strong>Total Students:</strong> ${students.length}</p>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Student ID</th>
+                                <th>Full Name</th>
+                                <th>Class</th>
+                                <th>Enrollment Year</th>
+                                <th>Admission Date</th>
+                                ${includeTimestamp ? '<th>Generated On</th>' : ''}
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                students.forEach((student, index) => {
+                    content += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><strong>${student.id}</strong></td>
+                        <td>${student.name}</td>
+                        <td>${student.class}</td>
+                        <td>${student.year}</td>
+                        <td>${student.admissionDate}</td>
+                        ${includeTimestamp ? `<td>${new Date(student.timestamp).toLocaleDateString()}</td>` : ''}
+                    </tr>
+                    `;
+                });
+                
+                content += `
+                        </tbody>
+                    </table>
+                    
+                    ${includeChecksum ? `
+                    <h2>Checksum Information</h2>
+                    <p>The 2-character checksum (last part of ID) is generated using a secure algorithm that avoids confusing characters (0/O, 1/I).</p>
+                    <p>Valid characters: <span class="checksum">ABCDEFGHJKLMNPQRSTUVWXYZ23456789</span></p>
+                    ` : ''}
+                    
+                    <div class="footer">
+                        <p>Generated by EMFHS Student ID Generator System | Format: EMFHS-YYYY-NNN-XX</p>
+                        <p>© ${new Date().getFullYear()} Emilia Foremost High School. All rights reserved.</p>
+                    </div>
+                </body>
+                </html>
+                `;
+                
+                const blob = new Blob([content], { type: 'application/msword' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `EMFHS_Students_${new Date().toISOString().split('T')[0]}.doc`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                hideDownloadModal();
+                hideLoading();
+                showNotification('Word document exported successfully!', 'success');
+            }, 1000);
+        }
+        
+        // Export to PDF
+        function exportToPDF() {
+            showLoading('Generating PDF document...');
+            
+            setTimeout(() => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('p', 'mm', 'a4');
+                const includeTimestamp = document.getElementById('includeTimestamp').checked;
+                const includeChecksum = document.getElementById('includeChecksum').checked;
+                
+                // Title
+                doc.setFontSize(20);
+                doc.setTextColor(30, 64, 175);
+                doc.text('EMILIA FOREMOST HIGH SCHOOL', 105, 20, { align: 'center' });
+                
+                doc.setFontSize(16);
+                doc.setTextColor(55, 65, 81);
+                doc.text('Student ID Registry', 105, 30, { align: 'center' });
+                
+                // Report info
+                doc.setFontSize(10);
+                doc.setTextColor(107, 114, 128);
+                doc.text(`Report Date: ${new Date().toLocaleDateString()}`, 20, 45);
+                doc.text(`Total Students: ${students.length}`, 20, 52);
+                
+                // Table data
+                const headers = [
+                    ['No.', 'Student ID', 'Full Name', 'Class', 'Year', 'Admission Date']
+                ];
+                
+                if (includeTimestamp) {
+                    headers[0].push('Generated On');
+                }
+                
+                const data = students.map((student, index) => {
+                    const row = [
+                        (index + 1).toString(),
+                        student.id,
+                        student.name,
+                        student.class,
+                        student.year,
+                        student.admissionDate
+                    ];
+                    
+                    if (includeTimestamp) {
+                        row.push(new Date(student.timestamp).toLocaleDateString());
+                    }
+                    
+                    return row;
+                });
+                
+                // Generate table
+                doc.autoTable({
+                    head: headers,
+                    body: data,
+                    startY: 60,
+                    theme: 'grid',
+                    headStyles: { 
+                        fillColor: [30, 64, 175],
+                        textColor: 255,
+                        fontSize: 10
+                    },
+                    bodyStyles: { fontSize: 9 },
+                    alternateRowStyles: { fillColor: [248, 250, 252] }
+                });
+                
+                // Footer
+                const pageCount = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(128, 128, 128);
+                    doc.text(
+                        `Page ${i} of ${pageCount} • Generated by EMFHS ID System • © ${new Date().getFullYear()}`,
+                        105,
+                        doc.internal.pageSize.height - 10,
+                        { align: 'center' }
+                    );
+                }
+                
+                // Save PDF
+                doc.save(`EMFHS_Students_${new Date().toISOString().split('T')[0]}.pdf`);
+                
+                hideDownloadModal();
+                hideLoading();
+                showNotification('PDF document exported successfully!', 'success');
+            }, 1000);
+        }
+        
+        // Export to CSV
+        function exportToCSV() {
+            showLoading('Generating CSV file...');
+            
+            setTimeout(() => {
+                const includeTimestamp = document.getElementById('includeTimestamp').checked;
+                
+                let csvContent = "No.,Student ID,Full Name,Class,Enrollment Year,Admission Date";
+                
+                if (includeTimestamp) {
+                    csvContent += ",Generated On";
+                }
+                
+                csvContent += "\n";
+                
+                students.forEach((student, index) => {
+                    const row = [
+                        index + 1,
+                        student.id,
+                        `"${student.name}"`,
+                        student.class,
+                        student.year,
+                        student.admissionDate
+                    ];
+                    
+                    if (includeTimestamp) {
+                        row.push(new Date(student.timestamp).toLocaleDateString());
+                    }
+                    
+                    csvContent += row.join(",") + "\n";
+                });
+                
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `EMFHS_Students_${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                hideDownloadModal();
+                hideLoading();
+                showNotification('CSV file exported successfully!', 'success');
+            }, 500);
+        }
+        
+        // Export JSON data
+        function exportJsonData() {
+            if (students.length === 0) {
+                showNotification('No data to export', 'warning');
+                return;
+            }
+            
+            const dataStr = JSON.stringify(students, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `emfhs_students_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification(`Exported ${students.length} records as JSON`, 'success');
+        }
+        
+        // Import data
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!confirm('Importing data will replace current records. Continue?')) {
+                document.getElementById('fileInput').value = '';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    
+                    // Validate imported data
+                    if (!Array.isArray(imported) || imported.length === 0) {
+                        throw new Error('Invalid data format');
+                    }
+                    
+                    // Check first item structure
+                    const first = imported[0];
+                    if (!first.id || !first.name || !first.year) {
+                        throw new Error('Data missing required fields');
+                    }
+                    
+                    // Check storage capacity
+                    const dataSize = new Blob([JSON.stringify(imported)]).size;
+                    if (dataSize > STORAGE_LIMIT) {
+                        showNotification(`Import too large (${formatBytes(dataSize)}). Max: 5MB`, 'error');
+                        return;
+                    }
+                    
+                    students = imported;
+                    
+                    // Reset sequence counters
+                    sequenceCounters = {};
+                    students.forEach(student => {
+                        const year = student.year;
+                        const seq = parseInt(student.id.split('-')[2]);
+                        
+                        if (!sequenceCounters[year]) {
+                            sequenceCounters[year] = 0;
+                        }
+                        
+                        if (sequenceCounters[year] < seq) {
+                            sequenceCounters[year] = seq;
+                        }
+                    });
+                    
+                    saveStudents();
+                    renderStudentList();
+                    updateStats();
+                    
+                    if (students.length > 0) {
+                        updatePreview(students[0]);
+                    }
+                    
+                    showNotification(`Imported ${students.length} records successfully`, 'success');
+                } catch (error) {
+                    console.error('Import error:', error);
+                    showNotification('Error importing data. Check file format.', 'error');
+                }
+                
+                // Reset file input
+                document.getElementById('fileInput').value = '';
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        // ====================
+        // UI FUNCTIONS
+        // ====================
+        
+        // Render student list with pagination
+        function renderStudentList() {
+            const tbody = document.getElementById('idList');
+            const emptyMessage = document.getElementById('emptyMessage');
+            
+            // Filter students based on search
+            let filteredStudents = students;
+            if (currentSearch) {
+                const searchTerm = currentSearch.toLowerCase();
+                filteredStudents = students.filter(student => 
+                    student.name.toLowerCase().includes(searchTerm) ||
+                    student.id.toLowerCase().includes(searchTerm) ||
+                    student.class.toLowerCase().includes(searchTerm) ||
+                    student.year.includes(searchTerm)
+                );
+            }
+            
+            const total = filteredStudents.length;
+            const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+            
+            // Adjust current page if needed
+            if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+            
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            const end = start + ITEMS_PER_PAGE;
+            const pageStudents = filteredStudents.slice(start, end);
+            
+            // Update pagination info
+            document.getElementById('pageStart').textContent = total > 0 ? start + 1 : 0;
+            document.getElementById('pageEnd').textContent = Math.min(end, total);
+            document.getElementById('totalStudents').textContent = total;
+            document.getElementById('currentPage').textContent = currentPage;
+            
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage === totalPages || totalPages === 0;
+            
+            // Render table
+            if (pageStudents.length === 0) {
+                tbody.innerHTML = '';
+                emptyMessage.style.display = 'block';
+                emptyMessage.textContent = currentSearch ? 
+                    'No students found matching your search' : 
+                    'No student IDs generated yet. Fill the form to create your first ID.';
+                return;
+            }
+            
+            emptyMessage.style.display = 'none';
+            
+            let html = '';
+            pageStudents.forEach((student, index) => {
+                const actualIndex = start + index;
+                html += `
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">${actualIndex + 1}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-mono font-bold text-primary">
+                        <span class="cursor-pointer hover:text-secondary" onclick="copyToClipboard('${student.id}')" title="Click to copy">
+                            ${student.id}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">${student.name}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">${student.class}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                        <button onclick="viewStudent(${students.indexOf(student)})" class="text-accent hover:text-secondary mr-3" title="View">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button onclick="editStudent(${students.indexOf(student)})" class="text-warning hover:text-orange-800 mr-3" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteStudent(${students.indexOf(student)})" class="text-danger hover:text-red-800" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+        
+        function changePage(delta) {
+            const total = currentSearch ? 
+                students.filter(s => 
+                    s.name.toLowerCase().includes(currentSearch) ||
+                    s.id.toLowerCase().includes(currentSearch) ||
+                    s.class.toLowerCase().includes(currentSearch) ||
+                    s.year.includes(currentSearch)
+                ).length : students.length;
+            
+            const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+            const newPage = currentPage + delta;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderStudentList();
+            }
+        }
+        
+        function updatePreview(student) {
+            document.getElementById('previewName').textContent = student.name;
+            document.getElementById('previewId').textContent = student.id;
+            document.getElementById('previewClass').textContent = student.class;
+            document.getElementById('previewYear').textContent = student.year;
+            document.getElementById('previewDate').textContent = student.admissionDate;
+        }
+        
+        function viewStudent(index) {
+            updatePreview(students[index]);
+            showNotification(`Viewing ${students[index].name}'s ID`, 'info');
+        }
+        
+        function editStudent(index) {
+            const student = students[index];
+            document.getElementById('fullName').value = student.name;
+            document.getElementById('enrollmentYear').value = student.year;
+            document.getElementById('studentClass').value = student.class;
+            
+            // Parse admission date
+            const date = new Date(student.dateObj || student.admissionDate);
+            document.getElementById('admissionDate').value = date.toISOString().split('T')[0];
+            
+            // Remove the old entry
+            students.splice(index, 1);
+            saveStudents();
+            renderStudentList();
+            
+            showNotification(`Editing ${student.name}. Fill form and click Generate to update.`, 'info');
+        }
+        
+        function deleteStudent(index) {
+            if (confirm(`Delete ${students[index].name}'s ID? This cannot be undone.`)) {
+                students.splice(index, 1);
+                saveStudents();
+                renderStudentList();
+                showNotification('Student ID deleted', 'success');
+            }
+        }
+        
+        function confirmClearAll() {
+            if (students.length === 0) {
+                showNotification('No data to clear', 'warning');
+                return;
+            }
+            
+            if (confirm(`Clear ALL ${students.length} student records? This cannot be undone!`)) {
+                students = [];
+                sequenceCounters = {};
+                saveStudents();
+                renderStudentList();
+                clearPreview();
+                showNotification('All data cleared successfully', 'success');
+            }
+        }
+        
+        function clearPreview() {
+            document.getElementById('previewName').textContent = '[Student Name]';
+            document.getElementById('previewId').textContent = 'EMFHS-2025-001-A4';
+            document.getElementById('previewClass').textContent = 'SSS 1';
+            document.getElementById('previewYear').textContent = '2025';
+            document.getElementById('previewDate').textContent = 'Jan 10, 2025';
+        }
+        
+        function updateStats() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayCount = students.filter(s => s.timestamp && s.timestamp.split('T')[0] === today).length;
+            const currentYear = document.getElementById('enrollmentYear').value;
+            const currentYearCount = students.filter(s => s.year === currentYear).length;
+            
+            document.getElementById('totalIds').textContent = students.length.toLocaleString();
+            document.getElementById('currentYearCount').textContent = currentYearCount.toLocaleString();
+            document.getElementById('currentYearLabel').textContent = `${currentYear} Enrollees`;
+            document.getElementById('todayIds').textContent = todayCount.toLocaleString();
+        }
+        
+        function updateStorageIndicator() {
+            const dataStr = JSON.stringify(students);
+            const dataSize = new Blob([dataStr]).size;
+            const percentage = (dataSize / STORAGE_LIMIT) * 100;
+            
+            document.getElementById('storageUsed').textContent = formatBytes(dataSize);
+            document.getElementById('storagePercent').textContent = Math.round(percentage) + '%';
+            
+            // Show warning if > 70%
+            const warning = document.getElementById('storageWarning');
+            if (percentage > 70) {
+                warning.classList.remove('hidden');
+            } else {
+                warning.classList.add('hidden');
+            }
+        }
+        
+        function updateDownloadCount() {
+            document.getElementById('downloadCount').textContent = students.length;
+        }
+        
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification(`Copied: ${text}`, 'success');
+            }).catch(err => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification(`Copied: ${text}`, 'success');
+            });
+        }
+        
+        function copyCurrentId() {
+            const id = document.getElementById('previewId').textContent;
+            if (id && id !== 'EMFHS-2025-001-A4') {
+                copyToClipboard(id);
+            }
+        }
+        
+        function downloadSingleIdCard() {
+            showNotification('Individual ID card download feature would generate a high-quality image', 'info');
+        }
+        
+        function showNotification(message, type = 'info') {
+            // Remove existing
+            const existing = document.querySelector('.notification');
+            if (existing) existing.remove();
+            
+            // Create new
+            const notification = document.createElement('div');
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                warning: 'bg-yellow-500',
+                info: 'bg-blue-500'
+            };
+            
+            notification.className = `notification fixed bottom-4 right-4 ${colors[type]} text-white px-6 py-4 rounded-xl shadow-lg z-50 transform transition-transform duration-300`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${icons[type]} mr-3 text-xl"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-remove
+            setTimeout(() => {
+                notification.style.transform = 'translateY(100px)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Initialize with sample data if empty
+        if (!localStorage.getItem('emfhs_students')) {
+            setTimeout(() => {
+                const sampleStudents = [
+                    {id: 'EMFHS-2025-001-A4', name: 'Adekunle Joy', class: 'JSS 1', year: '2025', admissionDate: 'Jan 10, 2025', timestamp: new Date().toISOString(), dateObj: '2025-01-10'},
+                    {id: 'EMFHS-2025-002-B9', name: 'Bello Samuel', class: 'JSS 2', year: '2025', admissionDate: 'Jan 10, 2025', timestamp: new Date().toISOString(), dateObj: '2025-01-10'},
+                    {id: 'EMFHS-2025-003-C3', name: 'Chukwu Emeka', class: 'JSS 3', year: '2025', admissionDate: 'Jan 12, 2025', timestamp: new Date().toISOString(), dateObj: '2025-01-12'},
+                    {id: 'EMFHS-2025-012-K8', name: 'David Oluwaseun', class: 'SSS 1', year: '2025', admissionDate: 'Jan 12, 2025', timestamp: new Date().toISOString(), dateObj: '2025-01-12'}
+                ];
+                
+                students = sampleStudents;
+                sequenceCounters[2025] = 12;
+                saveStudents();
+                renderStudentList();
+                if (students.length > 0) updatePreview(students[0]);
+                
+                showNotification('Welcome! Sample data loaded. Try generating your own IDs!', 'info');
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
