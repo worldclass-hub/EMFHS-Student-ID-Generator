@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EMFORHS Student ID Generator - Ultimate Edition</title>
 
-        <!-- Favicon - Emilia Logo -->
+    <!-- Favicon - Emilia Logo -->
     <link rel="icon" type="image/x-icon" href="https://ncctazjcffmpuniwctkz.supabase.co/storage/v1/object/public/user-uploads/EMILIA%20LOGO.png">
 
+    <!-- CSRF Token for Django -->
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
@@ -106,6 +109,75 @@
         .footer-wrapper {
             margin-top: auto;
         }
+        
+        /* ================ ULTIMATE LOGOUT BUTTON STYLES ================ */
+        .logout-glow {
+            animation: logout-glow 3s infinite alternate;
+        }
+        
+        @keyframes logout-glow {
+            from {
+                box-shadow: 0 0 10px rgba(239, 68, 68, 0.5),
+                          0 0 20px rgba(239, 68, 68, 0.3),
+                          0 0 30px rgba(239, 68, 68, 0.1);
+            }
+            to {
+                box-shadow: 0 0 20px rgba(239, 68, 68, 0.8),
+                          0 0 30px rgba(239, 68, 68, 0.6),
+                          0 0 40px rgba(239, 68, 68, 0.4);
+            }
+        }
+        
+        .security-scan {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            animation: security-scan 3s linear infinite;
+        }
+        
+        @keyframes security-scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .session-timer {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        
+        /* Confetti Animation */
+        .confetti {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            background-color: #f00;
+            top: 0;
+            opacity: 0;
+            z-index: 9999;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Enhanced notification */
+        .enhanced-notification {
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
         /* ==================== END ANTI-BORDER-EXCEED POWER ==================== */
     </style>
     
@@ -131,12 +203,15 @@
                         'card': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
                         'hover': '0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.06)',
                         'float': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-                        'glow': '0 0 30px rgba(59, 130, 246, 0.5)'
+                        'glow': '0 0 30px rgba(59, 130, 246, 0.5)',
+                        'danger-glow': '0 0 30px rgba(239, 68, 68, 0.5)'
                     },
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
                         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-                        'bounce-slow': 'bounce 3s infinite'
+                        'bounce-slow': 'bounce 3s infinite',
+                        'logout-glow': 'logout-glow 3s infinite alternate',
+                        'security-scan': 'security-scan 3s linear infinite'
                     },
                     keyframes: {
                         'float': {
@@ -233,7 +308,7 @@
             border-radius: 10px;
         }
         
-        ::webkit-scrollbar-thumb {
+        ::-webkit-scrollbar-thumb {
             background: linear-gradient(to bottom, #3b82f6, #1e40af);
             border-radius: 10px;
             border: 3px solid #f1f5f9;
@@ -279,11 +354,105 @@
     <!-- Scroll Boundary Indicator -->
     <div id="scrollBoundary" class="scroll-boundary"></div>
     
+    <!-- ================ ULTIMATE LOGOUT SYSTEM ================ -->
+    
     <!-- Floating Download Button -->
     <div id="floatingDownloadBtn" class="floating-download-btn fixed bottom-8 right-8 w-16 h-16 rounded-full premium-gradient flex items-center justify-center shadow-float cursor-pointer z-50 hover:shadow-glow transition-all duration-300">
         <i class="fas fa-file-export text-white text-2xl"></i>
         <div class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold animate-pulse">
             <span id="downloadCount">0</span>
+        </div>
+    </div>
+    
+    <!-- Enhanced Logout Confirmation Modal -->
+    <div id="logoutModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-[9999] p-4 backdrop-blur-sm">
+        <div class="bg-gradient-to-br from-gray-900 to-black rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-gray-800">
+            <!-- Security Scan Effect -->
+            <div class="security-scan"></div>
+            
+            <div class="p-8">
+                <!-- Modal Header -->
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-red-600 to-red-800 mx-auto mb-6 flex items-center justify-center shadow-danger-glow">
+                        <i class="fas fa-lock text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-2">
+                        <i class="fas fa-shield-alt text-red-500 mr-3"></i>
+                        Secure Session Termination
+                    </h3>
+                    <p class="text-gray-400">Confirm logout from the system</p>
+                </div>
+                
+                <!-- Security Status -->
+                <div class="bg-gray-900/50 rounded-xl p-4 mb-6 border border-gray-800">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse mr-3"></div>
+                            <span class="text-green-400 font-medium">Session Active</span>
+                        </div>
+                        <div class="session-timer text-red-400" id="sessionTimer">29:45</div>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        All unsaved data will be secured before logout
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="space-y-4">
+                    <button id="confirmLogoutBtn" 
+                            class="w-full bg-gradient-to-r from-red-700 to-red-900 hover:from-red-600 hover:to-red-800 text-white font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center transform hover:scale-[1.02] active:scale-95 shadow-lg group">
+                        <div class="flex items-center">
+                            <i class="fas fa-sign-out-alt text-xl mr-3 group-hover:animate-spin"></i>
+                            <span class="text-lg">Confirm Logout</span>
+                        </div>
+                    </button>
+                    
+                    <button id="cancelLogoutBtn" 
+                            class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center transform hover:scale-[1.02] active:scale-95 border border-gray-700">
+                        <div class="flex items-center">
+                            <i class="fas fa-times text-xl mr-3"></i>
+                            <span>Cancel & Return</span>
+                        </div>
+                    </button>
+                </div>
+                
+                <!-- Security Notice -->
+                <div class="mt-8 pt-6 border-t border-gray-800">
+                    <div class="flex items-start">
+                        <i class="fas fa-exclamation-triangle text-yellow-500 mt-1 mr-3"></i>
+                        <div class="text-sm text-gray-400">
+                            <span class="font-medium text-gray-300">Security Protocol:</span> This action will terminate your session, clear temporary data, and log you out from all devices.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Logout Success Modal -->
+    <div id="logoutSuccessModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-[9999] p-4 backdrop-blur-sm">
+        <div class="bg-gradient-to-br from-green-900/20 to-emerald-900/20 rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-green-800/30">
+            <div class="p-10 text-center">
+                <div class="w-24 h-24 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 mx-auto mb-8 flex items-center justify-center shadow-lg animate-bounce">
+                    <i class="fas fa-check text-white text-4xl"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-white mb-4">
+                    <i class="fas fa-shield-check text-green-400 mr-3"></i>
+                    Logout Successful!
+                </h3>
+                <p class="text-gray-300 text-lg mb-2">Session terminated securely</p>
+                <p class="text-gray-400 mb-8">Redirecting to login page...</p>
+                
+                <div class="w-full bg-gray-800 rounded-full h-2 mb-6">
+                    <div id="logoutProgress" class="bg-gradient-to-r from-green-500 to-emerald-600 h-2 rounded-full w-0 transition-all duration-1000"></div>
+                </div>
+                
+                <p class="text-sm text-gray-500">
+                    <i class="fas fa-lock mr-1"></i>
+                    All data secured • Session cleared • Security protocol complete
+                </p>
+            </div>
         </div>
     </div>
     
@@ -393,6 +562,43 @@
                     </div>
                     
                     <div class="flex flex-col items-end">
+                        <!-- User Profile & Logout Button -->
+                        <div class="flex items-center mb-3">
+                            <div class="relative group">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold shadow-lg cursor-pointer hover:scale-110 transition-transform">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="absolute -bottom-12 right-0 bg-white rounded-xl shadow-2xl p-3 min-w-[200px] hidden group-hover:block z-50 border border-gray-200">
+                                    <div class="mb-3 pb-3 border-b border-gray-100">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-sm mr-3">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-bold text-dark text-sm">Admin User</div>
+                                                <div class="text-xs text-gray-500">System Administrator</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button onclick="showEnhancedLogout()" 
+                                            class="w-full flex items-center justify-between px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-sign-out-alt mr-3"></i>
+                                            <span class="font-medium">Logout</span>
+                                        </div>
+                                        <i class="fas fa-chevron-right text-red-400"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Quick Logout Button (BLINKING REMOVED) -->
+                            <button onclick="showEnhancedLogout()" 
+                                    class="ml-3 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-medium flex items-center shadow-lg hover:shadow-danger-glow transition-all duration-300">
+                                <i class="fas fa-power-off mr-2"></i>
+                                <span class="hidden md:inline">Logout</span>
+                            </button>
+                        </div>
+                        
                         <div class="flex items-center glass-effect rounded-full px-4 py-2 shadow-card mb-2">
                             <i class="fas fa-graduation-cap text-accent mr-2"></i>
                             <span class="font-medium">Format: <code class="bg-gray-100 px-2 py-1 rounded font-mono">EMFHS-YYYY-NNN-XX</code></span>
@@ -636,7 +842,7 @@
                                     <i class="fas fa-chevron-left"></i>
                                 </button>
                                 <span id="currentPage" class="px-3 py-1 font-medium">1</span>
-                                <button id="nextPage" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl disabled:opacity-50 transition transform hover:-translate-y-0.5">
+                                <button id="nextPage" class="px-3 py-1 bg-gradient-to-r from-primary to-accent text-white rounded-xl disabled:opacity-50 transition transform hover:-translate-y-0.5">
                                     <i class="fas fa-chevron-right"></i>
                                 </button>
                             </div>
@@ -689,6 +895,11 @@
     <!-- Hidden file input for import -->
     <input type="file" id="fileInput" accept=".json" style="display: none;">
     
+    <!-- Hidden logout form for Django -->
+    <form id="djangoLogoutForm" action="{% url 'logout' %}" method="POST" style="display: none;">
+        {% csrf_token %}
+    </form>
+    
     <script>
         // ====================
         // ULTIMATE SYSTEM
@@ -705,6 +916,222 @@
         let sequenceCounters = {};
         let currentPage = 1;
         let currentSearch = '';
+        let sessionTimerInterval;
+        let sessionTime = 1800; // 30 minutes in seconds
+        
+        // ==================== ENHANCED LOGOUT SYSTEM ====================
+        
+        // Initialize session timer
+        function initSessionTimer() {
+            updateSessionTimerDisplay();
+            sessionTimerInterval = setInterval(() => {
+                if (sessionTime > 0) {
+                    sessionTime--;
+                    updateSessionTimerDisplay();
+                    
+                    // Show warning at 5 minutes
+                    if (sessionTime === 300) {
+                        showNotification('Session expires in 5 minutes. Save your work.', 'warning');
+                    }
+                    
+                    // Auto-logout at 0
+                    if (sessionTime === 0) {
+                        performAutoLogout();
+                    }
+                }
+            }, 1000);
+        }
+        
+        function updateSessionTimerDisplay() {
+            const minutes = Math.floor(sessionTime / 60);
+            const seconds = sessionTime % 60;
+            const timerElement = document.getElementById('sessionTimer');
+            if (timerElement) {
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Change color based on time
+                if (sessionTime < 300) { // Less than 5 minutes
+                    timerElement.className = 'session-timer text-red-500 animate-pulse';
+                } else if (sessionTime < 600) { // Less than 10 minutes
+                    timerElement.className = 'session-timer text-yellow-500';
+                } else {
+                    timerElement.className = 'session-timer text-green-400';
+                }
+            }
+        }
+        
+        // Show enhanced logout modal
+        function showEnhancedLogout() {
+            // Pause session timer
+            clearInterval(sessionTimerInterval);
+            
+            // Create confetti effect
+            createConfetti();
+            
+            // Show modal with animation
+            const modal = document.getElementById('logoutModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Add entrance animation
+            setTimeout(() => {
+                modal.querySelector('div > div').style.transform = 'scale(1)';
+                modal.querySelector('div > div').style.opacity = '1';
+            }, 10);
+            
+            // Reset focus to cancel button
+            setTimeout(() => {
+                document.getElementById('cancelLogoutBtn').focus();
+            }, 100);
+        }
+        
+        // Hide logout modal
+        function hideLogoutModal() {
+            const modal = document.getElementById('logoutModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            
+            // Resume session timer
+            initSessionTimer();
+        }
+        
+        // Perform logout with Django
+        function performDjangoLogout() {
+            // Show success animation
+            showLogoutSuccessAnimation();
+            
+            // Clear all local data
+            clearAllLocalData();
+            
+            // After 2 seconds, submit Django logout form
+            setTimeout(() => {
+                // Create and submit Django logout form
+                const logoutForm = document.getElementById('djangoLogoutForm');
+                if (logoutForm) {
+                    // Add CSRF token if not present
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = 'csrfmiddlewaretoken';
+                    csrfInput.value = csrfToken;
+                    logoutForm.appendChild(csrfInput);
+                    
+                    logoutForm.submit();
+                } else {
+                    // Fallback: Redirect to logout URL
+                    window.location.href = '/accounts/logout/';
+                }
+            }, 2000);
+        }
+        
+        // Auto logout when session expires
+        function performAutoLogout() {
+            showNotification('Session expired. Logging out automatically...', 'warning');
+            setTimeout(() => {
+                performDjangoLogout();
+            }, 2000);
+        }
+        
+        // Show logout success animation
+        function showLogoutSuccessAnimation() {
+            // Hide logout modal
+            hideLogoutModal();
+            
+            // Show success modal
+            const successModal = document.getElementById('logoutSuccessModal');
+            successModal.classList.remove('hidden');
+            successModal.classList.add('flex');
+            
+            // Animate progress bar
+            const progressBar = document.getElementById('logoutProgress');
+            setTimeout(() => {
+                progressBar.style.width = '100%';
+            }, 100);
+            
+            // Create more confetti
+            createEnhancedConfetti();
+            
+            // Play success sound (optional)
+            if (typeof Audio !== 'undefined') {
+                const successSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3');
+                successSound.volume = 0.3;
+                successSound.play().catch(e => console.log('Audio play failed:', e));
+            }
+        }
+        
+        // Create confetti effect
+        function createConfetti() {
+            const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
+            const container = document.body;
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animation = `confetti-fall ${Math.random() * 3 + 2}s linear forwards`;
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                container.appendChild(confetti);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+        
+        // Create enhanced confetti for success
+        function createEnhancedConfetti() {
+            const shapes = ['●', '■', '▲', '◆', '★'];
+            const container = document.body;
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.width = '20px';
+                confetti.style.height = '20px';
+                confetti.style.fontSize = '12px';
+                confetti.style.color = '#10b981';
+                confetti.style.display = 'flex';
+                confetti.style.alignItems = 'center';
+                confetti.style.justifyContent = 'center';
+                confetti.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+                confetti.style.animation = `confetti-fall ${Math.random() * 4 + 2}s linear forwards`;
+                confetti.style.animationDelay = Math.random() * 1 + 's';
+                container.appendChild(confetti);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 6000);
+            }
+        }
+        
+        // Clear all local data
+        function clearAllLocalData() {
+            try {
+                // Clear localStorage
+                localStorage.removeItem('emfhs_students');
+                localStorage.removeItem('emfhs_backup_' + Date.now());
+                
+                // Clear any session data
+                sessionStorage.clear();
+                
+                // Clear form data
+                document.getElementById('studentForm').reset();
+                
+                // Clear state
+                students = [];
+                sequenceCounters = {};
+                currentPage = 1;
+                currentSearch = '';
+                
+                console.log('All local data cleared securely');
+            } catch (error) {
+                console.error('Error clearing local data:', error);
+            }
+        }
         
         // ==================== SCROLL MANAGEMENT POWER ====================
         function setupScrollManagement() {
@@ -756,6 +1183,9 @@
             // Setup scroll management FIRST
             setupScrollManagement();
             
+            // Initialize session timer
+            initSessionTimer();
+            
             // Populate years from 2020 to 3000
             populateYearOptions();
             
@@ -770,7 +1200,38 @@
             updateDownloadCount();
             renderStudentList();
             
-            // Event listeners
+            // ==================== LOGOUT EVENT LISTENERS ====================
+            
+            // Logout modal buttons
+            document.getElementById('confirmLogoutBtn').addEventListener('click', performDjangoLogout);
+            document.getElementById('cancelLogoutBtn').addEventListener('click', hideLogoutModal);
+            
+            // Close modal when clicking outside
+            document.getElementById('logoutModal').addEventListener('click', function(e) {
+                if (e.target.id === 'logoutModal') {
+                    hideLogoutModal();
+                }
+            });
+            
+            // Keyboard shortcuts for logout
+            document.addEventListener('keydown', function(e) {
+                // Ctrl+Shift+L for logout
+                if (e.ctrlKey && e.shiftKey && e.key === 'L') {
+                    e.preventDefault();
+                    showEnhancedLogout();
+                }
+                
+                // Escape to cancel logout modal
+                if (e.key === 'Escape') {
+                    const logoutModal = document.getElementById('logoutModal');
+                    if (!logoutModal.classList.contains('hidden')) {
+                        hideLogoutModal();
+                    }
+                }
+            });
+            
+            // ==================== EXISTING EVENT LISTENERS ====================
+            
             document.getElementById('studentForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 generateStudentID();
@@ -825,6 +1286,14 @@
                 if (e.target.tagName === 'BODY' || e.target.tagName === 'HTML') {
                     e.preventDefault();
                 }
+            });
+            
+            // Reset session timer on user activity
+            ['click', 'keypress', 'mousemove', 'scroll'].forEach(event => {
+                document.addEventListener(event, () => {
+                    sessionTime = 1800; // Reset to 30 minutes
+                    updateSessionTimerDisplay();
+                });
             });
         });
         
@@ -1644,6 +2113,7 @@
             showNotification('Individual ID card download feature would generate a high-quality image', 'info');
         }
         
+        // Enhanced notification system
         function showNotification(message, type = 'info') {
             // Remove existing
             const existing = document.querySelector('.notification');
@@ -1658,27 +2128,30 @@
                 info: 'fa-info-circle'
             };
             const colors = {
-                success: 'bg-green-500',
-                error: 'bg-red-500',
-                warning: 'bg-yellow-500',
-                info: 'bg-blue-500'
+                success: 'bg-gradient-to-r from-green-600 to-emerald-700',
+                error: 'bg-gradient-to-r from-red-600 to-red-800',
+                warning: 'bg-gradient-to-r from-yellow-600 to-orange-600',
+                info: 'bg-gradient-to-r from-blue-600 to-indigo-700'
             };
             
-            notification.className = `notification fixed bottom-4 right-4 ${colors[type]} text-white px-6 py-4 rounded-xl shadow-lg z-50 transform transition-transform duration-300`;
+            notification.className = `notification enhanced-notification fixed bottom-4 right-4 ${colors[type]} text-white px-6 py-4 rounded-xl z-50 transform transition-all duration-300`;
             notification.innerHTML = `
                 <div class="flex items-center">
-                    <i class="fas ${icons[type]} mr-3 text-xl"></i>
-                    <span>${message}</span>
+                    <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center mr-3">
+                        <i class="fas ${icons[type]} text-xl"></i>
+                    </div>
+                    <span class="font-medium">${message}</span>
                 </div>
             `;
             
             document.body.appendChild(notification);
             
-            // Auto-remove
+            // Auto-remove with animation
             setTimeout(() => {
-                notification.style.transform = 'translateY(100px)';
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(20px)';
                 setTimeout(() => notification.remove(), 300);
-            }, 3000);
+            }, 4000);
         }
         
         // Initialize with sample data if empty
