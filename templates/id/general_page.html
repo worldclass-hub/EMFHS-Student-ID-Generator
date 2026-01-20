@@ -562,38 +562,11 @@
                     </div>
                     
                     <div class="flex flex-col items-end">
-                        <!-- User Profile & Logout Button -->
+                        <!-- REMOVED: User Profile & Logout Button Section -->
                         <div class="flex items-center mb-3">
-                            <div class="relative group">
-                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold shadow-lg cursor-pointer hover:scale-110 transition-transform">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div class="absolute -bottom-12 right-0 bg-white rounded-xl shadow-2xl p-3 min-w-[200px] hidden group-hover:block z-50 border border-gray-200">
-                                    <div class="mb-3 pb-3 border-b border-gray-100">
-                                        <div class="flex items-center">
-                                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-sm mr-3">
-                                                <i class="fas fa-user"></i>
-                                            </div>
-                                            <div>
-                                                <div class="font-bold text-dark text-sm">Admin User</div>
-                                                <div class="text-xs text-gray-500">System Administrator</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button onclick="showEnhancedLogout()" 
-                                            class="w-full flex items-center justify-between px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200">
-                                        <div class="flex items-center">
-                                            <i class="fas fa-sign-out-alt mr-3"></i>
-                                            <span class="font-medium">Logout</span>
-                                        </div>
-                                        <i class="fas fa-chevron-right text-red-400"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Quick Logout Button (BLINKING REMOVED) -->
+                            <!-- Simple Logout Button without user profile pop-up -->
                             <button onclick="showEnhancedLogout()" 
-                                    class="ml-3 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-medium flex items-center shadow-lg hover:shadow-danger-glow transition-all duration-300">
+                                    class="px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-medium flex items-center shadow-lg hover:shadow-danger-glow transition-all duration-300">
                                 <i class="fas fa-power-off mr-2"></i>
                                 <span class="hidden md:inline">Logout</span>
                             </button>
