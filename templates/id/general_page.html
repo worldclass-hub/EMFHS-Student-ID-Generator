@@ -17,57 +17,58 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- ==================== ANTI-BORDER-EXCEED POWER ==================== -->
+    <!-- ==================== ULTIMATE ANTI-OVERSCROLL SYSTEM ==================== -->
     <style>
-        /* CRITICAL FIX: Prevent overscroll bounce effect */
-        html {
-            overflow-x: hidden;
-            max-width: 100%;
-            position: relative;
-            overscroll-behavior: none;
+        /* 1. FIXED POSITION BODY - Prevents any movement beyond boundaries */
+        html, body {
+            width: 100%;
             height: 100%;
-            scroll-behavior: smooth;
-        }
-        
-        body {
+            position: fixed;
+            overflow: hidden;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-            max-width: 100%;
-            width: 100%;
-            overscroll-behavior-y: none;
-        }
-        
-        /* Main container - Proper scroll containment */
-        .page-container {
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow-x: hidden;
-        }
-        
-        /* Content wrapper - Proper scroll management */
-        .content-wrapper {
-            flex: 1 0 auto;
-            width: 100%;
-            max-width: 100%;
-            position: relative;
-        }
-        
-        /* Footer - Stays at bottom */
-        .page-footer {
-            flex-shrink: 0;
-            width: 100%;
-            position: relative;
-            bottom: 0;
+            margin: 0;
+            padding: 0;
+            touch-action: pan-y;
+            overscroll-behavior: none;
+            top: 0;
             left: 0;
             right: 0;
+            bottom: 0;
         }
         
-        /* Scroll boundary indicator */
+        /* 2. SINGLE SCROLL CONTAINER - Only this can scroll internally */
+        .scroll-container {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 3. PREVENT TOUCH OVERSCROLL */
+        .no-overscroll {
+            touch-action: pan-y;
+            overscroll-behavior: contain;
+        }
+        
+        /* 4. NO WHITE BORDERS EVER - Content completely contained */
+        .main-wrapper {
+            width: 100%;
+            min-height: 100%;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        /* 5. MOBILE-SPECIFIC FIXES */
+        @media (max-width: 768px) {
+            .scroll-container {
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior: contain;
+            }
+        }
+        
+        /* 6. SCROLL EDGE DETECTION HELPER */
         .scroll-boundary {
             position: fixed;
             bottom: 0;
@@ -85,32 +86,33 @@
             opacity: 1;
         }
         
-        /* Prevent pull-to-refresh on mobile */
+        /* 7. FULL WIDTH FOOTER */
+        .full-width-footer {
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            background: #111827;
+        }
+        
+        /* 8. CONTENT CONTAINER - Main content area */
+        .content-container {
+            max-width: 7xl;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
         @media (max-width: 768px) {
-            body {
-                overscroll-behavior-y: contain;
+            .content-container {
+                padding: 10px;
             }
         }
         
-        /* Ensure no content overflow */
-        main {
-            overflow-x: hidden;
-            width: 100%;
-        }
+        /* 9. PRESERVED FUNCTIONALITY - Original styles continue below */
         
-        /* Smooth scrolling boundaries */
-        .scroll-container {
-            position: relative;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        /* Footer stays at bottom */
-        .footer-wrapper {
-            margin-top: auto;
-        }
-        
-        /* ================ ULTIMATE LOGOUT BUTTON STYLES ================ */
+        /* ==================== ORIGINAL STYLES ==================== */
         .logout-glow {
             animation: logout-glow 3s infinite alternate;
         }
@@ -149,7 +151,6 @@
             letter-spacing: 2px;
         }
         
-        /* Confetti Animation */
         .confetti {
             position: fixed;
             width: 15px;
@@ -171,69 +172,12 @@
             }
         }
         
-        /* Enhanced notification */
         .enhanced-notification {
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
         
-        /* ==================== END ANTI-BORDER-EXCEED POWER ==================== */
-    </style>
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#1e40af',
-                        secondary: '#1e3a8a',
-                        accent: '#3b82f6',
-                        success: '#10b981',
-                        warning: '#f59e0b',
-                        danger: '#ef4444',
-                        dark: '#1f2937',
-                        light: '#f8fafc',
-                        premium: '#8b5cf6'
-                    },
-                    fontFamily: {
-                        'poppins': ['Poppins', 'sans-serif']
-                    },
-                    boxShadow: {
-                        'card': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-                        'hover': '0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.06)',
-                        'float': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-                        'glow': '0 0 30px rgba(59, 130, 246, 0.5)',
-                        'danger-glow': '0 0 30px rgba(239, 68, 68, 0.5)'
-                    },
-                    animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-                        'bounce-slow': 'bounce 3s infinite',
-                        'logout-glow': 'logout-glow 3s infinite alternate',
-                        'security-scan': 'security-scan 3s linear infinite'
-                    },
-                    keyframes: {
-                        'float': {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-20px)' }
-                        },
-                        'pulse-glow': {
-                            '0%, 100%': { 
-                                boxShadow: '0 0 20px rgba(139, 92, 246, 0.5)',
-                                transform: 'scale(1)'
-                            },
-                            '50%': { 
-                                boxShadow: '0 0 40px rgba(139, 92, 246, 0.8)',
-                                transform: 'scale(1.05)'
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
         /* Original styles from Code B */
         .gradient-bg {
             background: linear-gradient(90deg, #1e40af 0%, #3b82f6 100%);
@@ -349,520 +293,576 @@
             50% { transform: scaleY(1.5); }
         }
     </style>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                        secondary: '#1e3a8a',
+                        accent: '#3b82f6',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
+                        dark: '#1f2937',
+                        light: '#f8fafc',
+                        premium: '#8b5cf6'
+                    },
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        'hover': '0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.06)',
+                        'float': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                        'glow': '0 0 30px rgba(59, 130, 246, 0.5)',
+                        'danger-glow': '0 0 30px rgba(239, 68, 68, 0.5)'
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                        'logout-glow': 'logout-glow 3s infinite alternate',
+                        'security-scan': 'security-scan 3s linear infinite'
+                    },
+                    keyframes: {
+                        'float': {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { 
+                                boxShadow: '0 0 20px rgba(139, 92, 246, 0.5)',
+                                transform: 'scale(1)'
+                            },
+                            '50%': { 
+                                boxShadow: '0 0 40px rgba(139, 92, 246, 0.8)',
+                                transform: 'scale(1.05)'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="pattern-bg">
+<body class="pattern-bg no-overscroll">
     <!-- Scroll Boundary Indicator -->
     <div id="scrollBoundary" class="scroll-boundary"></div>
     
-    <!-- ================ ULTIMATE LOGOUT SYSTEM ================ -->
-    
-    <!-- Floating Download Button -->
-    <div id="floatingDownloadBtn" class="floating-download-btn fixed bottom-8 right-8 w-16 h-16 rounded-full premium-gradient flex items-center justify-center shadow-float cursor-pointer z-50 hover:shadow-glow transition-all duration-300">
-        <i class="fas fa-file-export text-white text-2xl"></i>
-        <div class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold animate-pulse">
-            <span id="downloadCount">0</span>
-        </div>
-    </div>
-    
-    <!-- Enhanced Logout Confirmation Modal -->
-    <div id="logoutModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-[9999] p-4 backdrop-blur-sm">
-        <div class="bg-gradient-to-br from-gray-900 to-black rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-gray-800">
-            <!-- Security Scan Effect -->
-            <div class="security-scan"></div>
+    <!-- 2. SINGLE SCROLL CONTAINER -->
+    <div class="scroll-container" id="scrollContainer">
+        <div class="main-wrapper">
+            <!-- ================ ULTIMATE LOGOUT SYSTEM ================ -->
             
-            <div class="p-8">
-                <!-- Modal Header -->
-                <div class="text-center mb-8">
-                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-red-600 to-red-800 mx-auto mb-6 flex items-center justify-center shadow-danger-glow">
-                        <i class="fas fa-lock text-white text-3xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-white mb-2">
-                        <i class="fas fa-shield-alt text-red-500 mr-3"></i>
-                        Secure Session Termination
-                    </h3>
-                    <p class="text-gray-400">Confirm logout from the system</p>
-                </div>
-                
-                <!-- Security Status -->
-                <div class="bg-gray-900/50 rounded-xl p-4 mb-6 border border-gray-800">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center">
-                            <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse mr-3"></div>
-                            <span class="text-green-400 font-medium">Session Active</span>
-                        </div>
-                        <div class="session-timer text-red-400" id="sessionTimer">29:45</div>
-                    </div>
-                    <div class="text-xs text-gray-500">
-                        <i class="fas fa-info-circle mr-1"></i>
-                        All unsaved data will be secured before logout
-                    </div>
-                </div>
-                
-                <!-- Action Buttons -->
-                <div class="space-y-4">
-                    <button id="confirmLogoutBtn" 
-                            class="w-full bg-gradient-to-r from-red-700 to-red-900 hover:from-red-600 hover:to-red-800 text-white font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center transform hover:scale-[1.02] active:scale-95 shadow-lg group">
-                        <div class="flex items-center">
-                            <i class="fas fa-sign-out-alt text-xl mr-3 group-hover:animate-spin"></i>
-                            <span class="text-lg">Confirm Logout</span>
-                        </div>
-                    </button>
-                    
-                    <button id="cancelLogoutBtn" 
-                            class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center transform hover:scale-[1.02] active:scale-95 border border-gray-700">
-                        <div class="flex items-center">
-                            <i class="fas fa-times text-xl mr-3"></i>
-                            <span>Cancel & Return</span>
-                        </div>
-                    </button>
-                </div>
-                
-                <!-- Security Notice -->
-                <div class="mt-8 pt-6 border-t border-gray-800">
-                    <div class="flex items-start">
-                        <i class="fas fa-exclamation-triangle text-yellow-500 mt-1 mr-3"></i>
-                        <div class="text-sm text-gray-400">
-                            <span class="font-medium text-gray-300">Security Protocol:</span> This action will terminate your session, clear temporary data, and log you out from all devices.
-                        </div>
-                    </div>
+            <!-- Floating Download Button -->
+            <div id="floatingDownloadBtn" class="floating-download-btn fixed bottom-8 right-8 w-16 h-16 rounded-full premium-gradient flex items-center justify-center shadow-float cursor-pointer z-50 hover:shadow-glow transition-all duration-300">
+                <i class="fas fa-file-export text-white text-2xl"></i>
+                <div class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold animate-pulse">
+                    <span id="downloadCount">0</span>
                 </div>
             </div>
-        </div>
-    </div>
-    
-    <!-- Logout Success Modal -->
-    <div id="logoutSuccessModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-[9999] p-4 backdrop-blur-sm">
-        <div class="bg-gradient-to-br from-green-900/20 to-emerald-900/20 rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-green-800/30">
-            <div class="p-10 text-center">
-                <div class="w-24 h-24 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 mx-auto mb-8 flex items-center justify-center shadow-lg animate-bounce">
-                    <i class="fas fa-check text-white text-4xl"></i>
-                </div>
-                <h3 class="text-3xl font-bold text-white mb-4">
-                    <i class="fas fa-shield-check text-green-400 mr-3"></i>
-                    Logout Successful!
-                </h3>
-                <p class="text-gray-300 text-lg mb-2">Session terminated securely</p>
-                <p class="text-gray-400 mb-8">Redirecting to login page...</p>
-                
-                <div class="w-full bg-gray-800 rounded-full h-2 mb-6">
-                    <div id="logoutProgress" class="bg-gradient-to-r from-green-500 to-emerald-600 h-2 rounded-full w-0 transition-all duration-1000"></div>
-                </div>
-                
-                <p class="text-sm text-gray-500">
-                    <i class="fas fa-lock mr-1"></i>
-                    All data secured • Session cleared • Security protocol complete
-                </p>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Download Modal -->
-    <div id="downloadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl shadow-float max-w-md w-full download-modal">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-2xl font-bold text-dark">
-                        <i class="fas fa-download text-accent mr-2"></i>
-                        Export Student Data
-                    </h3>
-                    <button id="closeModal" class="text-gray-400 hover:text-gray-600 text-2xl">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <p class="text-gray-600 mb-6">
-                    Export all generated student IDs in your preferred format. 
-                    <span class="font-semibold text-primary" id="exportCount">0 records</span> will be exported.
-                </p>
-                
-                <div class="space-y-4">
-                    <button id="exportWordBtn" class="w-full bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 text-blue-800 p-4 rounded-xl flex items-center justify-between transition-all duration-300 group hover:scale-[1.02]">
-                        <div class="flex items-center">
-                            <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mr-4 group-hover:bg-blue-200">
-                                <i class="fab fa-microsoft text-blue-600 text-2xl"></i>
-                            </div>
-                            <div class="text-left">
-                                <h4 class="font-bold text-lg">Microsoft Word</h4>
-                                <p class="text-sm text-blue-600">Professional table format</p>
-                            </div>
-                        </div>
-                        <i class="fas fa-chevron-right text-blue-400 group-hover:text-blue-600"></i>
-                    </button>
-                    
-                    <button id="exportPDFBtn" class="w-full bg-red-50 hover:bg-red-100 border-2 border-red-200 text-red-800 p-4 rounded-xl flex items-center justify-between transition-all duration-300 group hover:scale-[1.02]">
-                        <div class="flex items-center">
-                            <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center mr-4 group-hover:bg-red-200">
-                                <i class="fas fa-file-pdf text-red-600 text-2xl"></i>
-                            </div>
-                            <div class="text-left">
-                                <h4 class="font-bold text-lg">PDF Document</h4>
-                                <p class="text-sm text-red-600">Print-ready format</p>
-                            </div>
-                        </div>
-                        <i class="fas fa-chevron-right text-red-400 group-hover:text-red-600"></i>
-                    </button>
-                    
-                    <button id="exportCSVBtn" class="w-full bg-green-50 hover:bg-green-100 border-2 border-green-200 text-green-800 p-4 rounded-xl flex items-center justify-between transition-all duration-300 group hover:scale-[1.02]">
-                        <div class="flex items-center">
-                            <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center mr-4 group-hover:bg-green-200">
-                                <i class="fas fa-file-csv text-green-600 text-2xl"></i>
-                            </div>
-                            <div class="text-left">
-                                <h4 class="font-bold text-lg">CSV Spreadsheet</h4>
-                                <p class="text-sm text-green-600">Excel/Google Sheets compatible</p>
-                            </div>
-                        </div>
-                        <i class="fas fa-chevron-right text-green-400 group-hover:text-green-600"></i>
-                    </button>
-                </div>
-                
-                <div class="mt-8 pt-6 border-t border-gray-200">
-                    <label class="flex items-center">
-                        <input type="checkbox" id="includeTimestamp" class="w-4 h-4 text-accent rounded focus:ring-accent" checked>
-                        <span class="ml-2 text-gray-700">Include generation timestamp</span>
-                    </label>
-                    <label class="flex items-center mt-3">
-                        <input type="checkbox" id="includeChecksum" class="w-4 h-4 text-accent rounded focus:ring-accent" checked>
-                        <span class="ml-2 text-gray-700">Include checksum verification</span>
-                    </label>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-2xl p-8 shadow-float text-center">
-            <div class="loading-wave mb-4">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-            <p class="text-dark font-medium" id="loadingText">Preparing your document...</p>
-        </div>
-    </div>
-    
-    <!-- ==================== MAIN CONTAINER WITH ANTI-BORDER POWER ==================== -->
-    <div class="page-container" id="pageContainer">
-        <div class="content-wrapper max-w-7xl mx-auto p-4 md:p-6">
-            <!-- Header -->
-            <header class="mb-8 md:mb-12 text-center">
-                <div class="flex flex-col md:flex-row items-center justify-between mb-6">
-                    <div class="flex items-center mb-4 md:mb-0">
-                        <div class="w-16 h-16 rounded-full premium-gradient flex items-center justify-center mr-4 shadow-float animate-bounce-slow">
-                            <i class="fas fa-id-card-alt text-white text-2xl"></i>
-                        </div>
-                        <div class="text-left">
-                            <h1 class="text-2xl md:text-4xl font-bold text-dark bg-gradient-to-r from-primary to-premium bg-clip-text text-transparent">
-                                EMFORHS Student ID Generator
-                            </h1>
-                            <p class="text-gray-600">Ultimate Enterprise Edition • Official ID System</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex flex-col items-end">
-                        <!-- REMOVED: User Profile & Logout Button Section -->
-                        <div class="flex items-center mb-3">
-                            <!-- Simple Logout Button without user profile pop-up -->
-                            <button onclick="showEnhancedLogout()" 
-                                    class="px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-medium flex items-center shadow-lg hover:shadow-danger-glow transition-all duration-300">
-                                <i class="fas fa-power-off mr-2"></i>
-                                <span class="hidden md:inline">Logout</span>
-                            </button>
-                        </div>
-                        
-                        <div class="flex items-center glass-effect rounded-full px-4 py-2 shadow-card mb-2">
-                            <i class="fas fa-graduation-cap text-accent mr-2"></i>
-                            <span class="font-medium">Format: <code class="bg-gray-100 px-2 py-1 rounded font-mono">EMFHS-YYYY-NNN-XX</code></span>
-                        </div>
-                        <div id="storageIndicator" class="text-sm text-gray-600">
-                            <i class="fas fa-database mr-1"></i>
-                            Storage: <span id="storageUsed">0</span> / 5MB
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Storage Warning -->
-                <div id="storageWarning" class="hidden bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl p-4 mb-4">
-                    <div class="flex items-center">
-                        <i class="fas fa-exclamation-triangle text-yellow-600 text-xl mr-3"></i>
-                        <div>
-                            <h3 class="font-bold text-yellow-800">Storage Optimization Recommended</h3>
-                            <p class="text-yellow-700">You're approaching storage limit. Use the export feature to backup your data.</p>
-                        </div>
-                    </div>
-                </div>
-            </header>
             
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Left Column: Input Form & Stats -->
-                <div class="space-y-8">
-                    <!-- Input Form Section -->
-                    <div class="bg-white rounded-2xl shadow-card p-6 md:p-8 id-card">
-                        <h2 class="text-2xl font-bold text-dark mb-6 flex items-center">
-                            <i class="fas fa-user-plus text-accent mr-3"></i>
-                            Student Information
-                        </h2>
-                        
-                        <form id="studentForm" class="space-y-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label for="fullName" class="block text-gray-700 font-medium mb-2">
-                                        <i class="fas fa-user text-gray-500 mr-2"></i>Full Name
-                                    </label>
-                                    <input type="text" id="fullName" 
-                                           class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300"
-                                           placeholder="Enter student's full name" required>
-                                </div>
-                                
-                                <div>
-                                    <label for="enrollmentYear" class="block text-gray-700 font-medium mb-2">
-                                        <i class="fas fa-calendar-alt text-gray-500 mr-2"></i>Enrollment Year
-                                    </label>
-                                    <select id="enrollmentYear" 
-                                            class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300">
-                                        <!-- Years will be dynamically populated from 2020 to 3000 -->
-                                    </select>
-                                </div>
-                                
-                                <div>
-                                    <label for="studentClass" class="block text-gray-700 font-medium mb-2">
-                                        <i class="fas fa-school text-gray-500 mr-2"></i>Class
-                                    </label>
-                                    <select id="studentClass" 
-                                            class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300">
-                                        <option value="JSS 1">JSS 1</option>
-                                        <option value="JSS 2">JSS 2</option>
-                                        <option value="JSS 3">JSS 3</option>
-                                        <option value="SSS 1" selected>SSS 1</option>
-                                        <option value="SSS 2">SSS 2</option>
-                                        <option value="SSS 3">SSS 3</option>
-                                    </select>
-                                </div>
-                                
-                                <div>
-                                    <label for="admissionDate" class="block text-gray-700 font-medium mb-2">
-                                        <i class="fas fa-calendar-day text-gray-500 mr-2"></i>Admission Date
-                                    </label>
-                                    <input type="date" id="admissionDate" 
-                                           class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300"
-                                           required>
-                                </div>
-                            </div>
-                            
-                            <div class="pt-4">
-                                <button type="submit" 
-                                        class="w-full premium-gradient text-white font-bold py-4 rounded-xl hover:opacity-90 transition duration-300 flex items-center justify-center shadow-card hover:shadow-hover transform hover:-translate-y-1">
-                                    <i class="fas fa-id-card mr-3"></i>
-                                    Generate Student ID
-                                </button>
-                            </div>
-                        </form>
-                        
-                        <!-- Data Management Tools -->
-                        <div class="mt-8 pt-6 border-t border-gray-200">
-                            <h3 class="text-lg font-bold text-dark mb-4">Data Management</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <button id="exportJsonBtn" class="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-3 rounded-xl font-medium transition flex items-center justify-center transform hover:-translate-y-1">
-                                    <i class="fas fa-file-code mr-2"></i> Export JSON
-                                </button>
-                                <button id="importBtn" class="bg-purple-100 hover:bg-purple-200 text-purple-800 px-4 py-3 rounded-xl font-medium transition flex items-center justify-center transform hover:-translate-y-1">
-                                    <i class="fas fa-file-import mr-2"></i> Import
-                                </button>
-                                <button id="clearAllBtn" class="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-3 rounded-xl font-medium transition flex items-center justify-center transform hover:-translate-y-1">
-                                    <i class="fas fa-trash mr-2"></i> Clear All
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Stats Section -->
-                        <div class="mt-8 pt-6 border-t border-gray-200">
-                            <h3 class="text-lg font-bold text-dark mb-4">System Statistics</h3>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center transform hover:scale-105 transition">
-                                    <div class="text-2xl font-bold text-primary" id="totalIds">0</div>
-                                    <div class="text-gray-600 text-sm">Total Students</div>
-                                </div>
-                                <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center transform hover:scale-105 transition">
-                                    <div class="text-2xl font-bold text-success" id="currentYearCount">0</div>
-                                    <div class="text-gray-600 text-sm" id="currentYearLabel">2025 Enrollees</div>
-                                </div>
-                                <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 text-center transform hover:scale-105 transition">
-                                    <div class="text-2xl font-bold text-premium" id="todayIds">0</div>
-                                    <div class="text-gray-600 text-sm">Today's Adds</div>
-                                </div>
-                                <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 text-center transform hover:scale-105 transition">
-                                    <div class="text-2xl font-bold text-warning" id="storagePercent">0%</div>
-                                    <div class="text-gray-600 text-sm">Storage Used</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Enhanced Logout Confirmation Modal -->
+            <div id="logoutModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-[9999] p-4 backdrop-blur-sm">
+                <div class="bg-gradient-to-br from-gray-900 to-black rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-gray-800">
+                    <!-- Security Scan Effect -->
+                    <div class="security-scan"></div>
                     
-                    <!-- Bulk Operations -->
-                    <div class="bg-white rounded-2xl shadow-card p-6 id-card">
-                        <h3 class="text-xl font-bold text-dark mb-4 flex items-center">
-                            <i class="fas fa-bolt text-accent mr-3"></i>
-                            Bulk Operations
-                        </h3>
+                    <div class="p-8">
+                        <!-- Modal Header -->
+                        <div class="text-center mb-8">
+                            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-red-600 to-red-800 mx-auto mb-6 flex items-center justify-center shadow-danger-glow">
+                                <i class="fas fa-lock text-white text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-2">
+                                <i class="fas fa-shield-alt text-red-500 mr-3"></i>
+                                Secure Session Termination
+                            </h3>
+                            <p class="text-gray-400">Confirm logout from the system</p>
+                        </div>
+                        
+                        <!-- Security Status -->
+                        <div class="bg-gray-900/50 rounded-xl p-4 mb-6 border border-gray-800">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse mr-3"></div>
+                                    <span class="text-green-400 font-medium">Session Active</span>
+                                </div>
+                                <div class="session-timer text-red-400" id="sessionTimer">29:45</div>
+                            </div>
+                            <div class="text-xs text-gray-500">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                All unsaved data will be secured before logout
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
                         <div class="space-y-4">
-                            <div>
-                                <label class="block text-gray-700 font-medium mb-2">
-                                    <i class="fas fa-users text-gray-500 mr-2"></i>Generate Multiple IDs
-                                </label>
-                                <textarea id="bulkNames" 
-                                          class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300 h-32 resize-none"
-                                          placeholder="Enter student names (one per line)&#10;Example:&#10;Adekunle Joy&#10;Bello Samuel&#10;Chukwu Emeka"></textarea>
-                                <div class="text-sm text-gray-500 mt-1">Names will be assigned to the selected class and year</div>
-                            </div>
-                            <button id="bulkGenerateBtn" 
-                                    class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 rounded-xl hover:opacity-90 transition flex items-center justify-center shadow-card transform hover:-translate-y-1">
-                                <i class="fas fa-magic mr-2"></i>
-                                Generate Bulk IDs
+                            <button id="confirmLogoutBtn" 
+                                    class="w-full bg-gradient-to-r from-red-700 to-red-900 hover:from-red-600 hover:to-red-800 text-white font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center transform hover:scale-[1.02] active:scale-95 shadow-lg group">
+                                <div class="flex items-center">
+                                    <i class="fas fa-sign-out-alt text-xl mr-3 group-hover:animate-spin"></i>
+                                    <span class="text-lg">Confirm Logout</span>
+                                </div>
                             </button>
+                            
+                            <button id="cancelLogoutBtn" 
+                                    class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center transform hover:scale-[1.02] active:scale-95 border border-gray-700">
+                                <div class="flex items-center">
+                                    <i class="fas fa-times text-xl mr-3"></i>
+                                    <span>Cancel & Return</span>
+                                </div>
+                            </button>
+                        </div>
+                        
+                        <!-- Security Notice -->
+                        <div class="mt-8 pt-6 border-t border-gray-800">
+                            <div class="flex items-start">
+                                <i class="fas fa-exclamation-triangle text-yellow-500 mt-1 mr-3"></i>
+                                <div class="text-sm text-gray-400">
+                                    <span class="font-medium text-gray-300">Security Protocol:</span> This action will terminate your session, clear temporary data, and log you out from all devices.
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Right Column: Preview & List -->
-                <div class="space-y-8">
-                    <!-- ID Card Preview -->
-                    <div class="id-card shadow-card p-8 relative overflow-hidden">
-                        <!-- Decorative elements -->
-                        <div class="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-blue-100 to-transparent rounded-full opacity-50"></div>
-                        <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-tr from-purple-100 to-transparent rounded-full opacity-50"></div>
+            </div>
+            
+            <!-- Logout Success Modal -->
+            <div id="logoutSuccessModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-[9999] p-4 backdrop-blur-sm">
+                <div class="bg-gradient-to-br from-green-900/20 to-emerald-900/20 rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-green-800/30">
+                    <div class="p-10 text-center">
+                        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 mx-auto mb-8 flex items-center justify-center shadow-lg animate-bounce">
+                            <i class="fas fa-check text-white text-4xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold text-white mb-4">
+                            <i class="fas fa-shield-check text-green-400 mr-3"></i>
+                            Logout Successful!
+                        </h3>
+                        <p class="text-gray-300 text-lg mb-2">Session terminated securely</p>
+                        <p class="text-gray-400 mb-8">Redirecting to login page...</p>
                         
-                        <div class="flex justify-between items-start mb-6 relative">
-                            <div>
-                                <h2 class="text-xl font-bold text-dark">EMILIA FOREMOST HIGH SCHOOL</h2>
-                                <p class="text-gray-600">Official Student Identification Card</p>
+                        <div class="w-full bg-gray-800 rounded-full h-2 mb-6">
+                            <div id="logoutProgress" class="bg-gradient-to-r from-green-500 to-emerald-600 h-2 rounded-full w-0 transition-all duration-1000"></div>
+                        </div>
+                        
+                        <p class="text-sm text-gray-500">
+                            <i class="fas fa-lock mr-1"></i>
+                            All data secured • Session cleared • Security protocol complete
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Download Modal -->
+            <div id="downloadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+                <div class="bg-white rounded-2xl shadow-float max-w-md w-full download-modal">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-2xl font-bold text-dark">
+                                <i class="fas fa-download text-accent mr-2"></i>
+                                Export Student Data
+                            </h3>
+                            <button id="closeModal" class="text-gray-400 hover:text-gray-600 text-2xl">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <p class="text-gray-600 mb-6">
+                            Export all generated student IDs in your preferred format. 
+                            <span class="font-semibold text-primary" id="exportCount">0 records</span> will be exported.
+                        </p>
+                        
+                        <div class="space-y-4">
+                            <button id="exportWordBtn" class="w-full bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 text-blue-800 p-4 rounded-xl flex items-center justify-between transition-all duration-300 group hover:scale-[1.02]">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mr-4 group-hover:bg-blue-200">
+                                        <i class="fab fa-microsoft text-blue-600 text-2xl"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <h4 class="font-bold text-lg">Microsoft Word</h4>
+                                        <p class="text-sm text-blue-600">Professional table format</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-blue-400 group-hover:text-blue-600"></i>
+                            </button>
+                            
+                            <button id="exportPDFBtn" class="w-full bg-red-50 hover:bg-red-100 border-2 border-red-200 text-red-800 p-4 rounded-xl flex items-center justify-between transition-all duration-300 group hover:scale-[1.02]">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center mr-4 group-hover:bg-red-200">
+                                        <i class="fas fa-file-pdf text-red-600 text-2xl"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <h4 class="font-bold text-lg">PDF Document</h4>
+                                        <p class="text-sm text-red-600">Print-ready format</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-red-400 group-hover:text-red-600"></i>
+                            </button>
+                            
+                            <button id="exportCSVBtn" class="w-full bg-green-50 hover:bg-green-100 border-2 border-green-200 text-green-800 p-4 rounded-xl flex items-center justify-between transition-all duration-300 group hover:scale-[1.02]">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center mr-4 group-hover:bg-green-200">
+                                        <i class="fas fa-file-csv text-green-600 text-2xl"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <h4 class="font-bold text-lg">CSV Spreadsheet</h4>
+                                        <p class="text-sm text-green-600">Excel/Google Sheets compatible</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-green-400 group-hover:text-green-600"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="mt-8 pt-6 border-t border-gray-200">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="includeTimestamp" class="w-4 h-4 text-accent rounded focus:ring-accent" checked>
+                                <span class="ml-2 text-gray-700">Include generation timestamp</span>
+                            </label>
+                            <label class="flex items-center mt-3">
+                                <input type="checkbox" id="includeChecksum" class="w-4 h-4 text-accent rounded focus:ring-accent" checked>
+                                <span class="ml-2 text-gray-700">Include checksum verification</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading Overlay -->
+            <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+                <div class="bg-white rounded-2xl p-8 shadow-float text-center">
+                    <div class="loading-wave mb-4">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <p class="text-dark font-medium" id="loadingText">Preparing your document...</p>
+                </div>
+            </div>
+            
+            <!-- ==================== MAIN CONTENT ==================== -->
+            <div class="content-container">
+                <!-- Header -->
+                <header class="mb-8 md:mb-12 text-center">
+                    <div class="flex flex-col md:flex-row items-center justify-between mb-6">
+                        <div class="flex items-center mb-4 md:mb-0">
+                            <div class="w-16 h-16 rounded-full premium-gradient flex items-center justify-center mr-4 shadow-float animate-bounce-slow">
+                                <i class="fas fa-id-card-alt text-white text-2xl"></i>
                             </div>
-                            <div class="w-16 h-16 rounded-full premium-gradient flex items-center justify-center shadow-lg">
-                                <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                            <div class="text-left">
+                                <h1 class="text-2xl md:text-4xl font-bold text-dark bg-gradient-to-r from-primary to-premium bg-clip-text text-transparent">
+                                    EMFORHS Student ID Generator
+                                </h1>
+                                <p class="text-gray-600">Ultimate Enterprise Edition • Official ID System</p>
                             </div>
                         </div>
                         
-                        <div class="flex flex-col md:flex-row items-center md:items-start mb-8 relative">
-                            <div class="w-32 h-32 rounded-xl bg-gradient-to-br from-blue-100 to-gray-200 flex items-center justify-center mb-4 md:mb-0 md:mr-8 shadow-inner border-4 border-white">
-                                <i class="fas fa-user text-gray-400 text-6xl"></i>
+                        <div class="flex flex-col items-end">
+                            <!-- REMOVED: User Profile & Logout Button Section -->
+                            <div class="flex items-center mb-3">
+                                <!-- Simple Logout Button without user profile pop-up -->
+                                <button onclick="showEnhancedLogout()" 
+                                        class="px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-medium flex items-center shadow-lg hover:shadow-danger-glow transition-all duration-300">
+                                    <i class="fas fa-power-off mr-2"></i>
+                                    <span class="hidden md:inline">Logout</span>
+                                </button>
                             </div>
                             
-                            <div class="flex-1">
-                                <div class="mb-4">
-                                    <div class="text-gray-500 text-sm">STUDENT NAME</div>
-                                    <div class="text-xl font-bold text-dark" id="previewName">[Student Name]</div>
-                                </div>
-                                
-                                <div class="grid grid-cols-2 gap-4 mb-6">
-                                    <div>
-                                        <div class="text-gray-500 text-sm">STUDENT ID</div>
-                                        <div class="text-lg font-mono font-bold text-primary" id="previewId">EMFHS-2025-001-A4</div>
-                                    </div>
-                                    <div>
-                                        <div class="text-gray-500 text-sm">CLASS</div>
-                                        <div class="text-lg font-bold text-dark" id="previewClass">SSS 1</div>
-                                    </div>
-                                    <div>
-                                        <div class="text-gray-500 text-sm">ENROLLMENT YEAR</div>
-                                        <div class="text-lg font-bold text-dark" id="previewYear">2025</div>
-                                    </div>
-                                    <div>
-                                        <div class="text-gray-500 text-sm">ADMISSION DATE</div>
-                                        <div class="text-lg font-bold text-dark" id="previewDate">Jan 10, 2025</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="flex space-x-3">
-                                    <button onclick="copyCurrentId()" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg font-medium transition flex items-center justify-center transform hover:-translate-y-1">
-                                        <i class="fas fa-copy mr-2"></i> Copy ID
-                                    </button>
-                                    <button onclick="downloadSingleIdCard()" class="flex-1 bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium transition flex items-center justify-center transform hover:-translate-y-1">
-                                        <i class="fas fa-id-card mr-2"></i> Save Card
-                                    </button>
-                                </div>
+                            <div class="flex items-center glass-effect rounded-full px-4 py-2 shadow-card mb-2">
+                                <i class="fas fa-graduation-cap text-accent mr-2"></i>
+                                <span class="font-medium">Format: <code class="bg-gray-100 px-2 py-1 rounded font-mono">EMFHS-YYYY-NNN-XX</code></span>
                             </div>
-                        </div>
-                        
-                        <div class="text-xs text-gray-400 text-center pt-4 border-t border-gray-100">
-                            <i class="fas fa-shield-alt mr-1"></i> Secure ID with verification checksum
+                            <div id="storageIndicator" class="text-sm text-gray-600">
+                                <i class="fas fa-database mr-1"></i>
+                                Storage: <span id="storageUsed">0</span> / 5MB
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- Search & Generated IDs -->
-                    <div class="bg-white rounded-2xl shadow-card p-6 id-card scroll-container">
-                        <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-                            <h2 class="text-2xl font-bold text-dark flex items-center mb-4 md:mb-0">
-                                <i class="fas fa-list text-accent mr-3"></i>
-                                Generated IDs
+                    <!-- Storage Warning -->
+                    <div id="storageWarning" class="hidden bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl p-4 mb-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle text-yellow-600 text-xl mr-3"></i>
+                            <div>
+                                <h3 class="font-bold text-yellow-800">Storage Optimization Recommended</h3>
+                                <p class="text-yellow-700">You're approaching storage limit. Use the export feature to backup your data.</p>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Left Column: Input Form & Stats -->
+                    <div class="space-y-8">
+                        <!-- Input Form Section -->
+                        <div class="bg-white rounded-2xl shadow-card p-6 md:p-8 id-card">
+                            <h2 class="text-2xl font-bold text-dark mb-6 flex items-center">
+                                <i class="fas fa-user-plus text-accent mr-3"></i>
+                                Student Information
                             </h2>
                             
-                            <div class="relative w-full md:w-64">
-                                <input type="text" id="searchInput" 
-                                       class="w-full p-3 pl-10 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300"
-                                       placeholder="Search students...">
-                                <i class="fas fa-search text-gray-400 absolute left-3 top-3.5"></i>
+                            <form id="studentForm" class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="fullName" class="block text-gray-700 font-medium mb-2">
+                                            <i class="fas fa-user text-gray-500 mr-2"></i>Full Name
+                                        </label>
+                                        <input type="text" id="fullName" 
+                                               class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300"
+                                               placeholder="Enter student's full name" required>
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="enrollmentYear" class="block text-gray-700 font-medium mb-2">
+                                            <i class="fas fa-calendar-alt text-gray-500 mr-2"></i>Enrollment Year
+                                        </label>
+                                        <select id="enrollmentYear" 
+                                                class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300">
+                                            <!-- Years will be dynamically populated from 2020 to 3000 -->
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="studentClass" class="block text-gray-700 font-medium mb-2">
+                                            <i class="fas fa-school text-gray-500 mr-2"></i>Class
+                                        </label>
+                                        <select id="studentClass" 
+                                                class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300">
+                                            <option value="JSS 1">JSS 1</option>
+                                            <option value="JSS 2">JSS 2</option>
+                                            <option value="JSS 3">JSS 3</option>
+                                            <option value="SSS 1" selected>SSS 1</option>
+                                            <option value="SSS 2">SSS 2</option>
+                                            <option value="SSS 3">SSS 3</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="admissionDate" class="block text-gray-700 font-medium mb-2">
+                                            <i class="fas fa-calendar-day text-gray-500 mr-2"></i>Admission Date
+                                        </label>
+                                        <input type="date" id="admissionDate" 
+                                               class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300"
+                                               required>
+                                    </div>
+                                </div>
+                                
+                                <div class="pt-4">
+                                    <button type="submit" 
+                                            class="w-full premium-gradient text-white font-bold py-4 rounded-xl hover:opacity-90 transition duration-300 flex items-center justify-center shadow-card hover:shadow-hover transform hover:-translate-y-1">
+                                        <i class="fas fa-id-card mr-3"></i>
+                                        Generate Student ID
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <!-- Data Management Tools -->
+                            <div class="mt-8 pt-6 border-t border-gray-200">
+                                <h3 class="text-lg font-bold text-dark mb-4">Data Management</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <button id="exportJsonBtn" class="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-3 rounded-xl font-medium transition flex items-center justify-center transform hover:-translate-y-1">
+                                        <i class="fas fa-file-code mr-2"></i> Export JSON
+                                    </button>
+                                    <button id="importBtn" class="bg-purple-100 hover:bg-purple-200 text-purple-800 px-4 py-3 rounded-xl font-medium transition flex items-center justify-center transform hover:-translate-y-1">
+                                        <i class="fas fa-file-import mr-2"></i> Import
+                                    </button>
+                                    <button id="clearAllBtn" class="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-3 rounded-xl font-medium transition flex items-center justify-center transform hover:-translate-y-1">
+                                        <i class="fas fa-trash mr-2"></i> Clear All
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Stats Section -->
+                            <div class="mt-8 pt-6 border-t border-gray-200">
+                                <h3 class="text-lg font-bold text-dark mb-4">System Statistics</h3>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center transform hover:scale-105 transition">
+                                        <div class="text-2xl font-bold text-primary" id="totalIds">0</div>
+                                        <div class="text-gray-600 text-sm">Total Students</div>
+                                    </div>
+                                    <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center transform hover:scale-105 transition">
+                                        <div class="text-2xl font-bold text-success" id="currentYearCount">0</div>
+                                        <div class="text-gray-600 text-sm" id="currentYearLabel">2025 Enrollees</div>
+                                    </div>
+                                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 text-center transform hover:scale-105 transition">
+                                        <div class="text-2xl font-bold text-premium" id="todayIds">0</div>
+                                        <div class="text-gray-600 text-sm">Today's Adds</div>
+                                    </div>
+                                    <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 text-center transform hover:scale-105 transition">
+                                        <div class="text-2xl font-bold text-warning" id="storagePercent">0%</div>
+                                        <div class="text-gray-600 text-sm">Storage Used</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- Pagination Controls -->
-                        <div class="flex justify-between items-center mb-4">
-                            <div class="text-gray-600">
-                                Showing <span id="pageStart">1</span>-<span id="pageEnd">10</span> of <span id="totalStudents">0</span>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button id="prevPage" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl disabled:opacity-50 transition transform hover:-translate-y-0.5">
-                                    <i class="fas fa-chevron-left"></i>
+                        <!-- Bulk Operations -->
+                        <div class="bg-white rounded-2xl shadow-card p-6 id-card">
+                            <h3 class="text-xl font-bold text-dark mb-4 flex items-center">
+                                <i class="fas fa-bolt text-accent mr-3"></i>
+                                Bulk Operations
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-700 font-medium mb-2">
+                                        <i class="fas fa-users text-gray-500 mr-2"></i>Generate Multiple IDs
+                                    </label>
+                                    <textarea id="bulkNames" 
+                                              class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300 h-32 resize-none"
+                                              placeholder="Enter student names (one per line)&#10;Example:&#10;Adekunle Joy&#10;Bello Samuel&#10;Chukwu Emeka"></textarea>
+                                    <div class="text-sm text-gray-500 mt-1">Names will be assigned to the selected class and year</div>
+                                </div>
+                                <button id="bulkGenerateBtn" 
+                                        class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 rounded-xl hover:opacity-90 transition flex items-center justify-center shadow-card transform hover:-translate-y-1">
+                                    <i class="fas fa-magic mr-2"></i>
+                                    Generate Bulk IDs
                                 </button>
-                                <span id="currentPage" class="px-3 py-1 font-medium">1</span>
-                                <button id="nextPage" class="px-3 py-1 bg-gradient-to-r from-primary to-accent text-white rounded-xl disabled:opacity-50 transition transform hover:-translate-y-0.5">
-                                    <i class="fas fa-chevron-right"></i>
-                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column: Preview & List -->
+                    <div class="space-y-8">
+                        <!-- ID Card Preview -->
+                        <div class="id-card shadow-card p-8 relative overflow-hidden">
+                            <!-- Decorative elements -->
+                            <div class="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-blue-100 to-transparent rounded-full opacity-50"></div>
+                            <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-tr from-purple-100 to-transparent rounded-full opacity-50"></div>
+                            
+                            <div class="flex justify-between items-start mb-6 relative">
+                                <div>
+                                    <h2 class="text-xl font-bold text-dark">EMILIA FOREMOST HIGH SCHOOL</h2>
+                                    <p class="text-gray-600">Official Student Identification Card</p>
+                                </div>
+                                <div class="w-16 h-16 rounded-full premium-gradient flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="flex flex-col md:flex-row items-center md:items-start mb-8 relative">
+                                <div class="w-32 h-32 rounded-xl bg-gradient-to-br from-blue-100 to-gray-200 flex items-center justify-center mb-4 md:mb-0 md:mr-8 shadow-inner border-4 border-white">
+                                    <i class="fas fa-user text-gray-400 text-6xl"></i>
+                                </div>
+                                
+                                <div class="flex-1">
+                                    <div class="mb-4">
+                                        <div class="text-gray-500 text-sm">STUDENT NAME</div>
+                                        <div class="text-xl font-bold text-dark" id="previewName">[Student Name]</div>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-4 mb-6">
+                                        <div>
+                                            <div class="text-gray-500 text-sm">STUDENT ID</div>
+                                            <div class="text-lg font-mono font-bold text-primary" id="previewId">EMFHS-2025-001-A4</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-gray-500 text-sm">CLASS</div>
+                                            <div class="text-lg font-bold text-dark" id="previewClass">SSS 1</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-gray-500 text-sm">ENROLLMENT YEAR</div>
+                                            <div class="text-lg font-bold text-dark" id="previewYear">2025</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-gray-500 text-sm">ADMISSION DATE</div>
+                                            <div class="text-lg font-bold text-dark" id="previewDate">Jan 10, 2025</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex space-x-3">
+                                        <button onclick="copyCurrentId()" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg font-medium transition flex items-center justify-center transform hover:-translate-y-1">
+                                            <i class="fas fa-copy mr-2"></i> Copy ID
+                                        </button>
+                                        <button onclick="downloadSingleIdCard()" class="flex-1 bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium transition flex items-center justify-center transform hover:-translate-y-1">
+                                            <i class="fas fa-id-card mr-2"></i> Save Card
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-xs text-gray-400 text-center pt-4 border-t border-gray-100">
+                                <i class="fas fa-shield-alt mr-1"></i> Secure ID with verification checksum
                             </div>
                         </div>
                         
-                        <div class="overflow-x-auto rounded-xl border-2 border-gray-200 max-h-96 overflow-y-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50 sticky top-0">
-                                    <tr>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">No.</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Student ID</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Name</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Class</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="idList" class="bg-white divide-y divide-gray-200">
-                                    <!-- IDs will be populated here -->
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <div class="mt-4 text-center text-gray-500" id="emptyMessage">
-                            <i class="fas fa-user-graduate text-3xl mb-2 text-gray-300"></i>
-                            <p class="font-medium">No student IDs generated yet.</p>
-                            <p class="text-sm">Fill the form to create your first ID.</p>
+                        <!-- Search & Generated IDs -->
+                        <div class="bg-white rounded-2xl shadow-card p-6 id-card">
+                            <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                                <h2 class="text-2xl font-bold text-dark flex items-center mb-4 md:mb-0">
+                                    <i class="fas fa-list text-accent mr-3"></i>
+                                    Generated IDs
+                                </h2>
+                                
+                                <div class="relative w-full md:w-64">
+                                    <input type="text" id="searchInput" 
+                                           class="w-full p-3 pl-10 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all duration-300"
+                                           placeholder="Search students...">
+                                    <i class="fas fa-search text-gray-400 absolute left-3 top-3.5"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Pagination Controls -->
+                            <div class="flex justify-between items-center mb-4">
+                                <div class="text-gray-600">
+                                    Showing <span id="pageStart">1</span>-<span id="pageEnd">10</span> of <span id="totalStudents">0</span>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button id="prevPage" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl disabled:opacity-50 transition transform hover:-translate-y-0.5">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <span id="currentPage" class="px-3 py-1 font-medium">1</span>
+                                    <button id="nextPage" class="px-3 py-1 bg-gradient-to-r from-primary to-accent text-white rounded-xl disabled:opacity-50 transition transform hover:-translate-y-0.5">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="overflow-x-auto rounded-xl border-2 border-gray-200 max-h-96 overflow-y-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50 sticky top-0">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">No.</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Student ID</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Name</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Class</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="idList" class="bg-white divide-y divide-gray-200">
+                                        <!-- IDs will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="mt-4 text-center text-gray-500" id="emptyMessage">
+                                <i class="fas fa-user-graduate text-3xl mb-2 text-gray-300"></i>
+                                <p class="font-medium">No student IDs generated yet.</p>
+                                <p class="text-sm">Fill the form to create your first ID.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            
+            <!-- FULL WIDTH FOOTER -->
+            <footer class="full-width-footer mt-16">
+                <div class="max-w-7xl mx-auto px-4 py-6 sm:py-8">
+                    <div class="text-center">
+                        <p class="mb-2 text-white"><strong>EMFORHS Student ID Generator System • Ultimate Edition • AI-Powered</strong></p>
+                        <p class="text-sm text-gray-400">Storage Capacity: 5MB • Supports 10,000+ Records • JSS/SSS Class System</p>
+                    </div>
+                    
+                    <div class="border-t border-gray-800 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center">
+                        <p class="text-gray-500 text-xs sm:text-sm">
+                            &copy; 2024 EMILIA FOREMOST HIGH SCHOOL. All Rights Reserved. • Secure Student ID Generator v3.0
+                        </p>
+                    </div>
+                </div>
+            </footer>
         </div>
-        
-        <!-- Footer -->
-        <footer class="page-footer bg-gray-900 text-white footer-wrapper">
-            <div class="max-w-7xl mx-auto px-4 py-6 sm:py-8">
-                <div class="text-center">
-                    <p class="mb-2"><strong>EMFORHS Student ID Generator System • Ultimate Edition • AI-Powered</strong></p>
-                    <p class="text-sm text-gray-400">Storage Capacity: 5MB • Supports 10,000+ Records • JSS/SSS Class System</p>
-                </div>
-                
-                <div class="border-t border-gray-800 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center">
-                    <p class="text-gray-500 text-xs sm:text-sm">
-                        &copy; 2024 EMILIA FOREMOST HIGH SCHOOL. All Rights Reserved. • Secure Student ID Generator v3.0
-                    </p>
-                </div>
-            </div>
-        </footer>
     </div>
     
     <!-- Hidden file input for import -->
@@ -891,6 +891,70 @@
         let currentSearch = '';
         let sessionTimerInterval;
         let sessionTime = 1800; // 30 minutes in seconds
+        
+        // ==================== ENHANCED SCROLL MANAGEMENT ====================
+        
+        function setupScrollManagement() {
+            const scrollContainer = document.getElementById('scrollContainer');
+            
+            // 1. FIXED POSITION BODY already set in CSS
+            
+            // 2. SINGLE SCROLL CONTAINER management
+            scrollContainer.style.overflowY = 'auto';
+            scrollContainer.style.overflowX = 'hidden';
+            
+            // 3. PREVENT TOUCH OVERSCROLL
+            if ('ontouchstart' in window) {
+                // iOS specific fixes
+                scrollContainer.style.WebkitOverflowScrolling = 'touch';
+                
+                // Prevent pull-to-refresh
+                document.addEventListener('touchmove', function(e) {
+                    if (scrollContainer.scrollTop <= 0) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+                
+                // Prevent rubber band effect
+                document.body.addEventListener('touchstart', function() {
+                    if (scrollContainer.scrollTop === 0) {
+                        scrollContainer.scrollTop = 1;
+                    }
+                    if (scrollContainer.scrollHeight - scrollContainer.scrollTop === scrollContainer.clientHeight) {
+                        scrollContainer.scrollTop = scrollContainer.scrollTop - 1;
+                    }
+                });
+            }
+            
+            // 4. NO WHITE BORDERS - Content already contained
+            
+            // 5. MOBILE-SPECIFIC FIXES already in CSS
+            
+            // 6. SCROLL EDGE DETECTION
+            scrollContainer.addEventListener('scroll', function() {
+                // Show boundary indicator when near bottom
+                const distanceFromBottom = this.scrollHeight - (this.scrollTop + this.clientHeight);
+                const boundary = document.getElementById('scrollBoundary');
+                
+                if (distanceFromBottom <= 50 && distanceFromBottom > 0) {
+                    boundary.classList.add('visible');
+                } else {
+                    boundary.classList.remove('visible');
+                }
+                
+                // Prevent overscroll at top
+                if (this.scrollTop <= 0) {
+                    this.scrollTop = 1;
+                }
+                
+                // Prevent overscroll at bottom
+                if (this.scrollTop + this.clientHeight >= this.scrollHeight) {
+                    this.scrollTop = this.scrollHeight - this.clientHeight - 1;
+                }
+            });
+            
+            // 7. PRESERVED FUNCTIONALITY - All original functionality preserved
+        }
         
         // ==================== ENHANCED LOGOUT SYSTEM ====================
         
@@ -1106,51 +1170,6 @@
             }
         }
         
-        // ==================== SCROLL MANAGEMENT POWER ====================
-        function setupScrollManagement() {
-            let lastScrollTop = 0;
-            let scrollTimeout;
-            
-            function checkScrollPosition() {
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const scrollHeight = document.documentElement.scrollHeight;
-                const clientHeight = document.documentElement.clientHeight;
-                
-                // Check if we're at the bottom
-                const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
-                
-                // Show boundary indicator when near bottom
-                if (distanceFromBottom <= 50 && distanceFromBottom > 0) {
-                    document.getElementById('scrollBoundary').classList.add('visible');
-                } else {
-                    document.getElementById('scrollBoundary').classList.remove('visible');
-                }
-                
-                // Prevent overscroll beyond footer
-                if (distanceFromBottom < 0) {
-                    // We've scrolled past the bottom, bounce back
-                    window.scrollTo({
-                        top: scrollHeight - clientHeight,
-                        behavior: 'smooth'
-                    });
-                }
-                
-                lastScrollTop = scrollTop;
-            }
-            
-            function handleScroll() {
-                if (scrollTimeout) {
-                    window.cancelAnimationFrame(scrollTimeout);
-                }
-                
-                scrollTimeout = window.requestAnimationFrame(checkScrollPosition);
-            }
-            
-            window.addEventListener('scroll', handleScroll, { passive: true });
-            checkScrollPosition();
-        }
-        // ==================== END SCROLL MANAGEMENT POWER ====================
-        
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             // Setup scroll management FIRST
@@ -1246,20 +1265,6 @@
                     console.log('Auto-backup created');
                 }
             }, 10 * 60 * 1000);
-            
-            // Prevent right-click drag on body
-            document.addEventListener('dragstart', function(e) {
-                if (e.target.tagName === 'BODY' || e.target.tagName === 'HTML') {
-                    e.preventDefault();
-                }
-            });
-            
-            // Prevent text selection on body drag
-            document.addEventListener('selectstart', function(e) {
-                if (e.target.tagName === 'BODY' || e.target.tagName === 'HTML') {
-                    e.preventDefault();
-                }
-            });
             
             // Reset session timer on user activity
             ['click', 'keypress', 'mousemove', 'scroll'].forEach(event => {
